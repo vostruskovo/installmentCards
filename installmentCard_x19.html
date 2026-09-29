@@ -1,0 +1,3774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installment Tracker · Cards & Bills</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f5fa 0%, #e4ecf3 100%);
+            min-height: 100vh;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 0.8rem;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1.5rem;
+            border-radius: 60px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            position: relative;
+        }
+
+        .header h1 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #0b2b3d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 i {
+            color: #2a7faa;
+            font-size: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: #1a5f7a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.25);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #0f4a61;
+            transform: scale(1.02);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #c5d8e5;
+            color: #1a4b5e;
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: #dbe8f0;
+        }
+
+        .btn-success-outline {
+            background: transparent;
+            border: 1px solid #2a8a5c;
+            color: #1a6a4a;
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-success-outline:hover {
+            background: #d4f0e0;
+        }
+
+        .btn-danger-outline {
+            background: transparent;
+            border: 1px solid #b34a3a;
+            color: #8a3a2a;
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-danger-outline:hover {
+            background: #fce8e4;
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: #d4e1eb;
+        }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 3px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid #c5d8e5;
+            border-radius: 30px;
+            padding: 0.15rem 0.6rem;
+            font-weight: 600;
+            font-size: 0.65rem;
+            color: #1d4d63;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .lang-btn.active {
+            background: #1a5f7a;
+            color: white;
+            border-color: #1a5f7a;
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: #d4e3ed;
+        }
+
+        #currencySelect {
+            border: 1px solid #c5d8e5;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+            background: transparent;
+            font-size: 0.8rem;
+            color: #1a4b5e;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #currencySelect:hover {
+            background: #dbe8f0;
+        }
+
+        .dashboard-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+            background: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-controls i {
+            color: #8aabbe;
+            font-size: 0.95rem;
+        }
+
+        .dashboard-controls input {
+            flex: 1;
+            min-width: 150px;
+            border: none;
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+            background: transparent;
+            outline: none;
+            color: #1a4b5e;
+        }
+
+        .dashboard-controls input::placeholder {
+            color: #b0cbd9;
+        }
+
+        .dashboard-controls select {
+            border: none;
+            background: #eef4f9;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #1a4b5e;
+            outline: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .dashboard-controls select:hover {
+            background: #dce8f0;
+        }
+
+        .dashboard-stats {
+            font-size: 0.8rem;
+            color: #5a7a8f;
+            padding-left: 0.8rem;
+            border-left: 2px solid #e0eaf2;
+        }
+
+        #dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #dashboard.hidden {
+            display: none;
+        }
+
+        .card-item {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 2px solid transparent;
+            text-align: center;
+            position: relative;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #1a5f7a;
+        }
+
+        .card-item.active {
+            border-color: #1a5f7a;
+            background: #f0f7fa;
+            box-shadow: 0 8px 25px rgba(26, 95, 122, 0.15);
+        }
+
+        .card-item.hidden-card {
+            display: none;
+        }
+
+        .card-item-image {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e0eaf2;
+            background: #eef4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #4f7a8f;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .card-item-image img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .card-item-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #103544;
+            margin-bottom: 2px;
+        }
+
+        .card-item-desc {
+            font-size: 0.75rem;
+            color: #7a9aaf;
+            margin-bottom: 6px;
+        }
+
+        .card-item-badge {
+            font-size: 0.7rem;
+            background: #eef4f9;
+            padding: 0.3rem 0.6rem;
+            border-radius: 30px;
+            color: #4f7a8f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            line-height: 1.4;
+            width: 100%;
+        }
+
+        .card-item-badge .badge-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge-price-sm {
+            font-size: 0.6rem;
+            color: #1a5f7a;
+            font-weight: 600;
+            background: #e8f0f6;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .badge-price-sm.monthly {
+            font-size: 0.60rem;
+            color: #0d6b3a;
+            font-weight: 700;
+            background: #d4f0e0;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            white-space: nowrap;
+            display: inline-block;
+            border: 1px solid #8fd4b0;
+        }
+
+        .badge-price-sm.monthly strong {
+            font-weight: 800;
+            color: #0a5a2e;
+        }
+
+        .badge-total {
+            font-size: 0.6rem;
+            color: #5a7a8f;
+            border-top: 1px solid #dce6ef;
+            padding-top: 4px;
+            margin-top: 2px;
+            width: 100%;
+        }
+
+        .card-item-actions {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            display: flex;
+            gap: 2px;
+        }
+
+        .card-item-actions button {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 30px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            color: #6a8aa0;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .card-item-actions button:hover {
+            background: #e3edf5;
+            color: #154c63;
+        }
+
+        .card-item-actions button.danger:hover {
+            background: #fce8e8;
+            color: #b33c3c;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: #7a9aaf;
+            background: rgba(255,255,255,0.6);
+            border-radius: 30px;
+        }
+
+        .no-results i {
+            font-size: 2rem;
+            opacity: 0.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5000;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #1f2b33;
+            color: white;
+            padding: 0.65rem 1.3rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+            opacity: 0;
+            transform: translateY(14px) scale(0.96);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            max-width: 90vw;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .toast-error i { color: #ff8a75; }
+        .toast-success i { color: #6bdc9c; }
+
+        .card-detail {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            display: none;
+            margin-bottom: 1.5rem;
+            min-height: 500px;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .card-detail.visible {
+            display: block;
+        }
+
+        .card-detail.visible.enter {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-detail-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: none;
+            color: #1a4b5e;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            transition: 0.2s;
+            margin-bottom: 0.8rem;
+        }
+
+        .card-detail-back:hover {
+            background: #eef4f9;
+        }
+
+        .card-detail-back i {
+            font-size: 0.9rem;
+        }
+
+        .card-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #f0f5fa;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .card-detail-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .card-detail-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e0eaf2;
+            background: #eef4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: #4f7a8f;
+            overflow: hidden;
+        }
+
+        .card-detail-image img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .card-detail-info h2 {
+            font-size: 1.6rem;
+            color: #103544;
+        }
+
+        .card-detail-info .desc {
+            font-size: 0.9rem;
+            color: #7a9aaf;
+        }
+
+        .card-detail-info .summary {
+            font-size: 0.85rem;
+            color: #4f7a8f;
+            margin-top: 4px;
+        }
+
+        .card-detail-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 8px;
+            padding: 10px 0;
+            border-top: 1px solid #e8eef5;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .bulk-actions .selected-count {
+            margin-left: auto;
+            font-size: 0.85rem;
+            color: #5a7a8f;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 1.2rem;
+            font-size: 0.85rem;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .btn-sm-success {
+            background: #1a7a5c;
+            color: white;
+        }
+        .btn-sm-success:hover { background: #0f654b; }
+
+        .btn-sm-primary {
+            background: #1a5f7a;
+            color: white;
+        }
+        .btn-sm-primary:hover { background: #0f4a61; }
+
+        .btn-sm-danger {
+            background: #b34a3a;
+            color: white;
+        }
+        .btn-sm-danger:hover { background: #8a3a2a; }
+
+        .btn-sm-outline {
+            background: transparent;
+            border: 1px solid #c5d8e5;
+            color: #1a4b5e;
+        }
+        .btn-sm-outline:hover { background: #dbe8f0; }
+
+        .btn-sm-danger-outline {
+            background: transparent;
+            border: 1px solid #b34a3a;
+            color: #8a3a2a;
+        }
+        .btn-sm-danger-outline:hover { background: #fce8e4; }
+
+        .bill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .bill-card {
+            background: #f8fbfd;
+            border-radius: 20px;
+            padding: 1.2rem;
+            border: 1px solid #e8eef5;
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp 0.35s ease backwards;
+        }
+
+        .bill-card:hover {
+            border-color: #c5d8e5;
+            background: #fafdff;
+        }
+
+        .bill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.6rem;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .bill-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .bill-select-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #1a5f7a;
+            flex-shrink: 0;
+        }
+
+        .bill-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #103544;
+        }
+
+        .bill-title small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: #6a8aa0;
+            margin-left: 4px;
+        }
+
+        .bill-desc {
+            font-size: 0.8rem;
+            color: #7a9aaf;
+            margin-top: -2px;
+            margin-bottom: 4px;
+        }
+
+        .bill-actions {
+            display: flex;
+            gap: 2px;
+        }
+
+        .icon-btn-sm {
+            background: transparent;
+            border: none;
+            font-size: 0.8rem;
+            color: #6a8aa0;
+            padding: 4px 6px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .icon-btn-sm:hover {
+            background: #e3edf5;
+            color: #154c63;
+        }
+
+        .icon-btn-sm.danger:hover {
+            background: #fce8e8;
+            color: #b33c3c;
+        }
+
+        .bill-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #1e4a5e;
+            background: #eef4f9;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .bill-info span i {
+            margin-right: 4px;
+            color: #5a8aa0;
+            font-size: 0.75rem;
+        }
+
+        .bill-info .paid-amount {
+            color: #1a7a5c;
+        }
+
+        .bill-info .remaining-amount {
+            color: #b34a3a;
+        }
+
+        .bill-info .remaining-amount.zero {
+            color: #1a7a5c;
+        }
+
+        .bill-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            flex: 1;
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 3px;
+        }
+
+        .bill-timeline::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .bill-timeline::-webkit-scrollbar-track {
+            background: #eef4f9;
+            border-radius: 10px;
+        }
+
+        .bill-timeline::-webkit-scrollbar-thumb {
+            background: #c5d8e5;
+            border-radius: 10px;
+        }
+
+        .bill-installment {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 0.3rem 0.6rem 0.3rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #e8eef5;
+            transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            animation: fadeInUp 0.3s ease backwards;
+        }
+
+        .bill-installment,
+        .bill-installment * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .bill-graphic-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .bill-donut {
+            --pct: 0%;
+            width: 58px;
+            height: 58px;
+            min-width: 58px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: conic-gradient(#1a9a63 var(--pct), #e2ebf2 var(--pct) 100%);
+            transition: background 0.45s ease;
+        }
+
+        .bill-donut.complete {
+            background: conic-gradient(#17c176 var(--pct), #e2ebf2 var(--pct) 100%);
+        }
+
+        .bill-donut::before {
+            content: '';
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: inset 0 0 0 1px #eef4f9;
+        }
+
+        .bill-donut-text {
+            position: relative;
+            text-align: center;
+            line-height: 1.1;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #1a4b5e;
+        }
+
+        .bill-donut-text small {
+            display: block;
+            font-size: 0.5rem;
+            font-weight: 600;
+            color: #8aabbe;
+        }
+
+        .bill-progress-track {
+            width: 100%;
+            height: 6px;
+            background: #e7eef4;
+            border-radius: 30px;
+            overflow: hidden;
+            margin-bottom: 0.7rem;
+        }
+
+        .bill-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2a7faa, #1a5f7a);
+            border-radius: 30px;
+            transition: width 0.45s ease;
+        }
+
+        .bill-progress-fill.complete {
+            background: linear-gradient(90deg, #1a9a63, #17c176);
+        }
+
+        .bill-card.fully-paid {
+            border-color: #bfe3cc;
+            box-shadow: 0 4px 16px rgba(26, 154, 99, 0.14);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes billCompletePulse {
+            0% { box-shadow: 0 0 0 0 rgba(23, 193, 118, 0.45); }
+            100% { box-shadow: 0 0 0 16px rgba(23, 193, 118, 0); }
+        }
+
+        .bill-card.just-completed {
+            animation: billCompletePulse 0.7s ease;
+        }
+
+        .bill-installment.toggled-pulse {
+            animation: installmentPulse 0.35s ease;
+        }
+
+        @keyframes installmentPulse {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.035); }
+            100% { transform: scale(1); }
+        }
+
+        .bill-installment.done {
+            background: #e8f5ec;
+            border-color: #b4d3be;
+        }
+
+        .bill-installment.done .installment-label {
+            text-decoration: line-through;
+            color: #3a7a5a;
+        }
+
+        .bill-installment.past-due {
+            background: #fde8e5;
+            border-color: #f5c2bc;
+        }
+
+        .custom-checkbox-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .custom-checkbox-wrap input[type="checkbox"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            opacity: 0;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #c2d3e0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+        }
+
+        .custom-checkbox i {
+            font-size: 0.55rem;
+            color: white;
+            opacity: 0;
+            transform: scale(0.4);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .custom-checkbox-wrap input[type="checkbox"]:checked ~ .custom-checkbox {
+            background: #1b7a4b;
+            border-color: #1b7a4b;
+        }
+
+        .custom-checkbox-wrap input[type="checkbox"]:checked ~ .custom-checkbox i {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .custom-checkbox-wrap input[type="checkbox"]:active ~ .custom-checkbox {
+            transform: scale(0.88);
+        }
+
+        .installment-label {
+            flex: 1;
+            font-weight: 500;
+            color: #2a4a5e;
+            font-size: 0.8rem;
+        }
+
+        .installment-label i {
+            color: #6a8aa0;
+            font-size: 0.6rem;
+            margin-right: 3px;
+        }
+
+        .installment-date {
+            font-size: 0.65rem;
+            color: #5a7a8f;
+            background: #e8f0f6;
+            padding: 0.1rem 0.4rem;
+            border-radius: 30px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .badge-pastdue-sm {
+            background: #c74b3c;
+            color: white;
+            font-size: 0.5rem;
+            padding: 0.05rem 0.4rem;
+            border-radius: 30px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        .badge-due-sm {
+            background: #e8a03a;
+            color: white;
+            font-size: 0.5rem;
+            padding: 0.05rem 0.4rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .installment-price-sm {
+            font-size: 0.7rem;
+            color: #1a5f7a;
+            font-weight: 600;
+            background: #e8f0f6;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            white-space: nowrap;
+        }
+
+        .empty-bills {
+            text-align: center;
+            padding: 2rem;
+            color: #8aabbe;
+            background: #f8fbfd;
+            border-radius: 20px;
+            border: 2px dashed #dce6ef;
+        }
+
+        .empty-bills i {
+            font-size: 2.5rem;
+            opacity: 0.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-bills p {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #5a7a8f;
+            background: rgba(255,255,255,0.6);
+            border-radius: 40px;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.4;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 20, 30, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: white;
+            max-width: 480px;
+            width: 92%;
+            border-radius: 40px;
+            padding: 1.8rem;
+            box-shadow: 0 40px 60px -20px rgba(0,0,0,0.4);
+            transform: scale(0.95);
+            transition: 0.2s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-box h2 {
+            font-weight: 600;
+            color: #0b3142;
+            margin-bottom: 1.4rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #1c4d62;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #d4e1eb;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            background: #fafdff;
+            transition: 0.15s;
+        }
+
+        .form-group textarea {
+            border-radius: 16px;
+            resize: vertical;
+            min-height: 50px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #1f7b9e;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(31, 123, 158, 0.12);
+        }
+
+        .form-group input[type="file"] {
+            padding: 0.4rem;
+        }
+
+        .image-preview {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4e1eb;
+            margin-top: 6px;
+            background: #eef4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: #4f7a8f;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+
+        .btn-secondary {
+            background: #e4edf5;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 60px;
+            font-weight: 500;
+            color: #1d4d63;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary:hover {
+            background: #d0deea;
+        }
+
+        .btn-success {
+            background: #1a7a5c;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-success:hover {
+            background: #0f654b;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #5a7a8f;
+            opacity: 0.6;
+            text-align: center;
+        }
+
+        .detail-mode .dashboard-controls {
+            display: none;
+        }
+
+        .detail-mode #dashboard {
+            display: none;
+        }
+
+        .detail-mode .card-detail {
+            display: block !important;
+        }
+
+        input:focus, select:focus, textarea:focus, button:focus {
+            outline: none;
+        }
+
+        .focus-trap {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .export-menu {
+            position: absolute;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            padding: 8px 0;
+            min-width: 200px;
+            z-index: 1000;
+            margin-top: 4px;
+        }
+
+        .export-menu button {
+            display: block;
+            width: 100%;
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.15s;
+            color: #1a4b5e;
+        }
+
+        .export-menu button:hover {
+            background: #eef4f9;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .header { flex-direction: column; align-items: stretch; border-radius: 30px; padding: 0.8rem 1rem; }
+            .header h1 { font-size: 1.2rem; }
+            .header-actions { justify-content: center; }
+            .dashboard-controls { flex-direction: column; align-items: stretch; border-radius: 24px; padding: 0.8rem 1rem; }
+            .dashboard-controls input { min-width: unset; }
+            .dashboard-controls select { width: 100%; }
+            .dashboard-stats { border-left: none; padding-left: 0; padding-top: 0.5rem; border-top: 2px solid #e0eaf2; text-align: center; }
+            #dashboard { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; }
+            .card-item { min-height: 110px; padding: 0.8rem; }
+            .card-item-image { width: 44px; height: 44px; font-size: 1.2rem; }
+            .card-detail { padding: 1rem; }
+            .card-detail-header { flex-direction: column; align-items: stretch; }
+            .card-detail-image { width: 50px; height: 50px; font-size: 1.3rem; }
+            .card-detail-info h2 { font-size: 1.3rem; }
+            .bill-grid { grid-template-columns: 1fr; }
+            .modal-box { padding: 1.2rem; }
+            .card-item-badge .badge-row { flex-direction: column; gap: 1px; }
+            .bulk-actions { flex-direction: column; align-items: stretch; }
+            .bulk-actions .selected-count { margin-left: 0; text-align: center; }
+            .bill-header-left { flex-wrap: wrap; }
+            .export-menu { min-width: 160px; }
+        }
+
+        @media (min-width: 601px) and (max-width: 900px) {
+            .bill-grid { grid-template-columns: repeat(2, 1fr); }
+            #dashboard { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+        }
+
+        @media (max-width: 600px) {
+            button, .card-item, .bill-installment {
+                cursor: default;
+                -webkit-touch-callout: none;
+            }
+            .bill-installment {
+                padding: 0.5rem 0.6rem !important;
+                min-height: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container" id="appContainer">
+    <div class="header">
+        <h1><i class="fas fa-credit-card"></i> <span id="appTitle">Cards & Bills</span></h1>
+        <div class="header-actions">
+            <div class="lang-selector">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pt">PT</button>
+                <button class="lang-btn" data-lang="es">ES</button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <select id="currencySelect">
+                <option value="USD">$ USD</option>
+                <option value="EUR">€ EUR</option>
+                <option value="GBP">£ GBP</option>
+                <option value="BRL">R$ BRL</option>
+                <option value="CAD">C$ CAD</option>
+                <option value="AUD">A$ AUD</option>
+                <option value="JPY">¥ JPY</option>
+                <option value="CNY">¥ CNY</option>
+            </select>
+            <div class="toolbar-divider"></div>
+            <button class="btn-outline" id="cloudSyncBtn" title="Cloud Sync"><i class="fas fa-cloud" id="cloudSyncIcon"></i> <span id="cloudSyncLabel">Cloud Sync</span></button>
+            <div class="toolbar-divider"></div>
+            <button class="btn-success-outline" id="exportBtn"><i class="fas fa-download"></i> <span id="exportLabel">Export</span></button>
+            <button class="btn-outline" id="importBtn"><i class="fas fa-upload"></i> <span id="importLabel">Import</span></button>
+            <input type="file" id="fileInput" class="file-input-hidden" accept=".json,.enc" />
+            <div class="toolbar-divider"></div>
+            <button class="btn-danger-outline" id="clearAllBtn"><i class="fas fa-trash"></i> <span id="clearLabel">Clear all</span></button>
+            <button class="btn-primary" id="openCreateCardBtn"><i class="fas fa-plus-circle"></i> <span id="newCardLabel">New card</span></button>
+        </div>
+    </div>
+
+    <div id="dashboardControls" class="dashboard-controls">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchCardsInput" placeholder="Search cards..." />
+        <select id="sortCardsSelect">
+            <option value="alpha">Sort: A-Z</option>
+            <option value="alphaDesc">Sort: Z-A</option>
+        </select>
+        <div class="dashboard-stats" id="cardsStats">0 cards</div>
+    </div>
+
+    <div id="dashboard" class="dashboard"></div>
+
+    <div id="cardDetail" class="card-detail"></div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fas fa-credit-card"></i>
+        <p id="emptyMsg">No cards yet.<br>Create your first card to start adding bills.</p>
+        <button class="btn-primary" id="emptyCreateBtn" style="margin-top: 1rem;"><i class="fas fa-plus-circle"></i> New card</button>
+    </div>
+
+    <!-- CARD MODAL -->
+    <div class="modal-overlay" id="cardModal">
+        <div class="modal-box" role="dialog" aria-labelledby="cardModalTitle" aria-modal="true">
+            <span class="focus-trap" tabindex="0"></span>
+            <h2 id="cardModalTitle"><i class="fas fa-pen"></i> New card</h2>
+            <form id="cardForm">
+                <div class="form-group">
+                    <label for="cardNameInput" id="cardNameLabel">Card name</label>
+                    <input type="text" id="cardNameInput" placeholder="e.g. Credit Card" required>
+                </div>
+                <div class="form-group">
+                    <label for="cardDescInput" id="cardDescLabel">Description</label>
+                    <textarea id="cardDescInput" placeholder="e.g. Main credit card for purchases" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="cardImageInput" id="cardImageLabel">Card image</label>
+                    <input type="file" id="cardImageInput" accept="image/*">
+                    <div id="cardImagePreviewContainer" style="margin-top: 6px;">
+                        <div class="image-preview" id="cardImagePreview">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="closeCardModalBtn"><span id="cancelLabel">Cancel</span></button>
+                    <button type="submit" class="btn-success" id="cardSubmitBtn"><i class="fas fa-check"></i> <span id="saveLabel">Save</span></button>
+                </div>
+            </form>
+            <span class="focus-trap" tabindex="0"></span>
+        </div>
+    </div>
+
+    <!-- SYNC MODAL -->
+    <div class="modal-overlay" id="syncModal">
+        <div class="modal-box" role="dialog" aria-labelledby="syncModalTitle" aria-modal="true" style="max-width: 520px;">
+            <span class="focus-trap" tabindex="0"></span>
+            <h2 id="syncModalTitle"><i class="fas fa-cloud"></i> Cloud Sync</h2>
+            <div id="syncStatusBox" style="padding:10px 12px;border-radius:8px;margin-bottom:14px;font-size:13px;background:rgba(255,255,255,0.06);">
+                <span id="syncStatusText">Not connected</span>
+            </div>
+            <div class="form-group">
+                <label for="syncUrlInput">Supabase URL</label>
+                <input type="text" id="syncUrlInput" placeholder="https://xxxxx.supabase.co">
+            </div>
+            <div class="form-group">
+                <label for="syncKeyInput">Supabase anon key</label>
+                <input type="text" id="syncKeyInput" placeholder="eyJhbGciOi...">
+            </div>
+            <div class="form-group">
+                <label for="syncCodeInput">Sync code</label>
+                <input type="text" id="syncCodeInput" placeholder="e.g. my-cards-2026">
+            </div>
+            <div class="modal-actions" style="flex-wrap:wrap;gap:8px;">
+                <button type="button" class="btn-secondary" id="closeSyncModalBtn">Close</button>
+                <button type="button" class="btn-danger-outline" id="disconnectSyncBtn" style="display:none;">Disconnect</button>
+                <button type="button" class="btn-success" id="connectSyncBtn"><i class="fas fa-plug"></i> Connect</button>
+            </div>
+            <span class="focus-trap" tabindex="0"></span>
+        </div>
+    </div>
+
+    <!-- BILL MODAL -->
+    <div class="modal-overlay" id="billModal">
+        <div class="modal-box" role="dialog" aria-labelledby="billModalTitle" aria-modal="true">
+            <span class="focus-trap" tabindex="0"></span>
+            <h2 id="billModalTitle"><i class="fas fa-receipt"></i> New bill</h2>
+            <form id="billForm">
+                <div class="form-group">
+                    <label for="billNameInput" id="billNameLabel">Bill name</label>
+                    <input type="text" id="billNameInput" placeholder="e.g. MacBook Pro" required>
+                </div>
+                <div class="form-group">
+                    <label for="billDescInput" id="billDescLabel">Description</label>
+                    <textarea id="billDescInput" placeholder="e.g. M3 chip, 16GB RAM" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="billPurchaseDate" id="billDateLabel">Purchase date</label>
+                    <input type="date" id="billPurchaseDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="billInstallments" id="billInstallmentsLabel">Number of installments</label>
+                    <input type="number" id="billInstallments" min="1" max="999" value="3" required>
+                </div>
+                <div class="form-group">
+                    <label for="billPrice" id="billPriceLabel">Installment price</label>
+                    <input type="number" id="billPrice" placeholder="0.00" step="0.01" min="0" value="0.00">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="closeBillModalBtn"><span id="cancelLabelBill">Cancel</span></button>
+                    <button type="submit" class="btn-success" id="billSubmitBtn"><i class="fas fa-check"></i> <span id="saveLabelBill">Save</span></button>
+                </div>
+            </form>
+            <span class="focus-trap" tabindex="0"></span>
+        </div>
+    </div>
+
+    <!-- SIMULATE MODAL -->
+    <div class="modal-overlay" id="simulateModal">
+        <div class="modal-box" role="dialog" aria-labelledby="simulateModalTitle" aria-modal="true" style="max-width: 560px;">
+            <span class="focus-trap" tabindex="0"></span>
+            <h2 id="simulateModalTitle"><i class="fas fa-calculator"></i> <span id="simulateModalTitleText">Payoff simulator</span></h2>
+            <div id="simulateBillInfo" style="font-size:0.85rem;color:#5a7a8f;margin-bottom:1rem;line-height:1.5;"></div>
+
+            <div id="simulateAlreadyPaid" style="display:none;color:#1a7a5c;font-weight:600;padding:0.4rem 0 1rem;"></div>
+
+            <div id="simulateFormWrap">
+                <div class="form-group">
+                    <label for="simPaceInput" id="simPaceLabel">Installments per month</label>
+                    <input type="number" id="simPaceInput" min="0" max="99" value="1">
+                </div>
+
+                <div class="form-group">
+                    <label id="simOverridesTitle">Month overrides (optional)</label>
+                    <div style="font-size:0.75rem;color:#8aabbe;margin:-2px 0 8px;" id="simOverridesHint">Type a quantity and hit Add (or Enter) — the month jumps forward each time, so you can build Sep: 2, Oct: 3, Nov: 1… in a row.</div>
+                    <div id="simOverridesList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <input type="month" id="simOverrideMonth" style="flex:1;min-width:130px;">
+                        <input type="number" id="simOverrideCount" min="0" max="99" placeholder="2" style="width:80px;">
+                        <button type="button" class="btn-outline" id="simAddOverrideBtn"><i class="fas fa-plus"></i> <span id="simAddOverrideLabel">Add</span></button>
+                    </div>
+                </div>
+
+                <div class="modal-actions" style="justify-content:flex-start;">
+                    <button type="button" class="btn-primary" id="simRunBtn"><i class="fas fa-play"></i> <span id="simRunLabel">Run simulation</span></button>
+                </div>
+            </div>
+
+            <div id="simulateResults" style="display:none;margin-top:1rem;"></div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="closeSimulateModalBtn"><span id="simCancelLabel">Cancel</span></button>
+            </div>
+            <span class="focus-trap" tabindex="0"></span>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <i class="fas fa-database"></i> <span id="footerText">permanent storage · all changes saved automatically</span>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    //  COMPLETE APPLICATION
+    // ============================================================
+    (function(){
+        // ---------- TRANSLATIONS ----------
+        const translations = {
+            en: {
+                appTitle: 'Cards & Bills',
+                newCard: 'New card',
+                newBill: 'Add bill',
+                export: 'Export',
+                import: 'Import',
+                clearAll: 'Clear all',
+                emptyMsg: 'No cards yet.<br>Create your first card to start adding bills.',
+                footer: 'permanent storage · all changes saved automatically',
+                cardNameLabel: 'Card name',
+                cardDescLabel: 'Description',
+                cardImageLabel: 'Card image',
+                billNameLabel: 'Bill name',
+                billDescLabel: 'Description',
+                billDateLabel: 'Purchase date',
+                billInstallmentsLabel: 'Number of installments',
+                billPriceLabel: 'Installment price',
+                cancel: 'Cancel',
+                save: 'Save',
+                editCard: 'Edit card',
+                editBill: 'Edit bill',
+                update: 'Update',
+                create: 'Create',
+                paid: 'paid',
+                installment: 'Installment',
+                pastDue: 'Past due',
+                dueSoon: 'Due soon',
+                deleteCardConfirm: 'Delete this card and all its bills?',
+                deleteBillConfirm: 'Delete this bill?',
+                clearAllConfirm: 'Delete ALL cards and bills? This action cannot be undone!',
+                exportError: 'No data to export.',
+                importSuccess: 'Data imported successfully!',
+                importError: 'Invalid file format. Please import a valid JSON file.',
+                dateLocale: 'en-US',
+                noBills: 'No bills yet. Add one!',
+                back: 'Back to cards',
+                totalPrice: 'Total',
+                paidAmount: 'Paid',
+                remaining: 'Remaining',
+                installmentsPaidLabel: 'installments paid',
+                installmentsLeftLabel: 'installments left',
+                of: 'of',
+                searchCards: 'Search cards...',
+                sortAlpha: 'Sort: A-Z',
+                sortAlphaDesc: 'Sort: Z-A',
+                noResults: 'No cards found matching your search.',
+                monthly: 'mo',
+                selectAll: 'Select All',
+                markPaid: 'Mark Paid',
+                unselectAll: 'Unselect All',
+                markNonPaid: 'Mark Non-Paid',
+                selected: 'selected',
+                selectBills: 'Select bills to bulk action',
+                endsIn: 'Ends',
+                simulate: 'Simulate',
+                simulateModalTitle: 'Payoff simulator',
+                simPaceLabel: 'Installments per month',
+                simOverridesTitle: 'Month overrides (optional)',
+                simOverridesHint: 'Type a quantity and hit Add (or Enter) — the month jumps forward each time, so you can build Sep: 2, Oct: 3, Nov: 1… in a row.',
+                simAddOverride: 'Add',
+                simRunSimulation: 'Run simulation',
+                simNoOverrides: 'No overrides added yet.',
+                simProjectedFinish: 'Projected finish',
+                simOriginalPlan: 'Original plan',
+                simAlreadyPaid: 'This bill is already fully paid.',
+                simColMonth: 'Month',
+                simColPaid: 'Paid',
+                simColLeft: 'Left',
+                simInvalidOverride: 'Pick a month and a quantity of 0 or more.',
+                simCantFinish: 'At this pace this bill will never finish. Increase the monthly pace or add overrides.',
+                simRemoveOverride: 'Remove'
+            },
+            pt: {
+                appTitle: 'Cartões & Contas',
+                newCard: 'Novo cartão',
+                newBill: 'Adicionar conta',
+                export: 'Exportar',
+                import: 'Importar',
+                clearAll: 'Limpar tudo',
+                emptyMsg: 'Nenhum cartão ainda.<br>Crie seu primeiro cartão para começar a adicionar contas.',
+                footer: 'armazenamento permanente · todas as alterações salvas automaticamente',
+                cardNameLabel: 'Nome do cartão',
+                cardDescLabel: 'Descrição',
+                cardImageLabel: 'Imagem do cartão',
+                billNameLabel: 'Nome da conta',
+                billDescLabel: 'Descrição',
+                billDateLabel: 'Data da compra',
+                billInstallmentsLabel: 'Número de parcelas',
+                billPriceLabel: 'Valor da parcela',
+                cancel: 'Cancelar',
+                save: 'Salvar',
+                editCard: 'Editar cartão',
+                editBill: 'Editar conta',
+                update: 'Atualizar',
+                create: 'Criar',
+                paid: 'pago',
+                installment: 'Parcela',
+                pastDue: 'Vencido',
+                dueSoon: 'Vence em breve',
+                deleteCardConfirm: 'Excluir este cartão e todas as contas?',
+                deleteBillConfirm: 'Excluir esta conta?',
+                clearAllConfirm: 'Excluir TODOS os cartões e contas? Esta ação não pode ser desfeita!',
+                exportError: 'Nenhum dado para exportar.',
+                importSuccess: 'Dados importados com sucesso!',
+                importError: 'Formato de arquivo inválido. Importe um arquivo JSON válido.',
+                dateLocale: 'pt-BR',
+                noBills: 'Nenhuma conta ainda. Adicione uma!',
+                back: 'Voltar para cartões',
+                totalPrice: 'Total',
+                paidAmount: 'Pago',
+                remaining: 'Restante',
+                installmentsPaidLabel: 'parcelas pagas',
+                installmentsLeftLabel: 'parcelas restantes',
+                of: 'de',
+                searchCards: 'Buscar cartões...',
+                sortAlpha: 'Ordenar: A-Z',
+                sortAlphaDesc: 'Ordenar: Z-A',
+                noResults: 'Nenhum cartão encontrado.',
+                monthly: 'mês',
+                selectAll: 'Selecionar tudo',
+                markPaid: 'Marcar pago',
+                unselectAll: 'Desmarcar tudo',
+                markNonPaid: 'Marcar não pago',
+                selected: 'selecionados',
+                selectBills: 'Selecione contas para ação em lote',
+                endsIn: 'Termina',
+                simulate: 'Simular',
+                simulateModalTitle: 'Simulador de quitação',
+                simPaceLabel: 'Parcelas por mês',
+                simOverridesTitle: 'Exceções por mês (opcional)',
+                simOverridesHint: 'Digite uma quantidade e clique em Adicionar (ou Enter) — o mês avança sozinho a cada vez, assim você monta Set: 2, Out: 3, Nov: 1… em sequência.',
+                simAddOverride: 'Adicionar',
+                simRunSimulation: 'Rodar simulação',
+                simNoOverrides: 'Nenhuma exceção adicionada ainda.',
+                simProjectedFinish: 'Término projetado',
+                simOriginalPlan: 'Plano original',
+                simAlreadyPaid: 'Esta conta já está totalmente paga.',
+                simColMonth: 'Mês',
+                simColPaid: 'Pagas',
+                simColLeft: 'Restam',
+                simInvalidOverride: 'Escolha um mês e uma quantidade de 0 ou mais.',
+                simCantFinish: 'Nesse ritmo esta conta nunca termina. Aumente as parcelas por mês ou adicione exceções.',
+                simRemoveOverride: 'Remover'
+            },
+            es: {
+                appTitle: 'Tarjetas & Facturas',
+                newCard: 'Nueva tarjeta',
+                newBill: 'Añadir factura',
+                export: 'Exportar',
+                import: 'Importar',
+                clearAll: 'Limpiar todo',
+                emptyMsg: 'No hay tarjetas aún.<br>Crea tu primera tarjeta para empezar a añadir facturas.',
+                footer: 'almacenamiento permanente · todos los cambios se guardan automáticamente',
+                cardNameLabel: 'Nombre de la tarjeta',
+                cardDescLabel: 'Descripción',
+                cardImageLabel: 'Imagen de la tarjeta',
+                billNameLabel: 'Nombre de la factura',
+                billDescLabel: 'Descripción',
+                billDateLabel: 'Fecha de compra',
+                billInstallmentsLabel: 'Número de cuotas',
+                billPriceLabel: 'Precio de la cuota',
+                cancel: 'Cancelar',
+                save: 'Guardar',
+                editCard: 'Editar tarjeta',
+                editBill: 'Editar factura',
+                update: 'Actualizar',
+                create: 'Crear',
+                paid: 'pagado',
+                installment: 'Cuota',
+                pastDue: 'Vencido',
+                dueSoon: 'Próximo a vencer',
+                deleteCardConfirm: '¿Eliminar esta tarjeta y todas sus facturas?',
+                deleteBillConfirm: '¿Eliminar esta factura?',
+                clearAllConfirm: '¿Eliminar TODAS las tarjetas y facturas? ¡Esta acción no se puede deshacer!',
+                exportError: 'No hay datos para exportar.',
+                importSuccess: '¡Datos importados correctamente!',
+                importError: 'Formato de archivo inválido. Importa un archivo JSON válido.',
+                dateLocale: 'es-ES',
+                noBills: 'No hay facturas aún. ¡Añade una!',
+                back: 'Volver a tarjetas',
+                totalPrice: 'Total',
+                paidAmount: 'Pagado',
+                remaining: 'Restante',
+                installmentsPaidLabel: 'cuotas pagadas',
+                installmentsLeftLabel: 'cuotas restantes',
+                of: 'de',
+                searchCards: 'Buscar tarjetas...',
+                sortAlpha: 'Ordenar: A-Z',
+                sortAlphaDesc: 'Ordenar: Z-A',
+                noResults: 'No se encontraron tarjetas.',
+                monthly: 'mes',
+                selectAll: 'Seleccionar todo',
+                markPaid: 'Marcar pagado',
+                unselectAll: 'Deseleccionar todo',
+                markNonPaid: 'Marcar no pagado',
+                selected: 'seleccionados',
+                selectBills: 'Seleccione facturas para acción masiva',
+                endsIn: 'Termina',
+                simulate: 'Simular',
+                simulateModalTitle: 'Simulador de pago',
+                simPaceLabel: 'Cuotas por mes',
+                simOverridesTitle: 'Excepciones por mes (opcional)',
+                simOverridesHint: 'Escribe una cantidad y pulsa Añadir (o Enter) — el mes avanza solo cada vez, así puedes armar Sep: 2, Oct: 3, Nov: 1… seguidos.',
+                simAddOverride: 'Añadir',
+                simRunSimulation: 'Ejecutar simulación',
+                simNoOverrides: 'Aún no hay excepciones añadidas.',
+                simProjectedFinish: 'Fin proyectado',
+                simOriginalPlan: 'Plan original',
+                simAlreadyPaid: 'Esta factura ya está totalmente pagada.',
+                simColMonth: 'Mes',
+                simColPaid: 'Pagadas',
+                simColLeft: 'Restantes',
+                simInvalidOverride: 'Elige un mes y una cantidad de 0 o más.',
+                simCantFinish: 'A este ritmo esta factura nunca termina. Aumenta las cuotas mensuales o añade excepciones.',
+                simRemoveOverride: 'Eliminar'
+            }
+        };
+
+        // ---------- GLOBALS ----------
+        let currentLang = 'en';
+        let cardImageDataUrl = null;
+        let editingCardId = null;
+        let editingBillId = null;
+        let editingBillCardId = null;
+        let selectedCardId = null;
+        let isDetailMode = false;
+        let cards = [];
+        let selectedBills = new Set();
+        let currentCurrency = 'USD';
+        let saveTimeout;
+
+        const STORAGE_KEY = 'cards_bills_data_v2';
+        const CURRENCY_KEY = 'preferred_currency';
+
+        // ---------- UTILITY FUNCTIONS ----------
+        function t(key) {
+            return translations[currentLang]?.[key] || key;
+        }
+
+        function getDateLocale() {
+            return translations[currentLang]?.dateLocale || 'en-US';
+        }
+
+        function getFormatter() {
+            return new Intl.NumberFormat(getDateLocale(), { 
+                style: 'currency', 
+                currency: currentCurrency 
+            });
+        }
+
+        function generateId() { 
+            return Date.now().toString(36) + Math.random().toString(36).substr(2,5); 
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function sanitizeImageSrc(src) {
+            if (!src || typeof src !== 'string') return '';
+            if (/^data:image\//i.test(src) || /^https?:\/\//i.test(src)) return src;
+            return '';
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        function formatDate(date) {
+            const locale = getDateLocale();
+            return date.toLocaleDateString(locale, { month: '2-digit', day: '2-digit', year: 'numeric' });
+        }
+
+        function formatMonthYear(date) {
+            const locale = getDateLocale();
+            return date.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
+        }
+
+        function validateDate(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return new Date().toISOString().split('T')[0];
+            }
+            return dateString;
+        }
+
+        // ---------- TOAST ----------
+        function showToast(message, type) {
+            type = type || 'error';
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container';
+                document.body.appendChild(toastContainer);
+            }
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i><span></span>`;
+            toast.querySelector('span').textContent = message;
+            toastContainer.appendChild(toast);
+            requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 250);
+            }, 2800);
+        }
+
+        // ---------- STORAGE ----------
+        function safeLocalStorage() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                return true;
+            } catch(e) {
+                showToast('⚠️ Storage is full. Please export your data and clear some space.');
+                return false;
+            }
+        }
+
+        function saveData() {
+            if (!safeLocalStorage()) return;
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+                localStorage.setItem(STORAGE_KEY + '_backup', JSON.stringify(cards));
+            } catch(e) {
+                showToast('❌ Failed to save data. Storage may be full.');
+                return;
+            }
+        }
+
+        function saveDataWithIndicator() {
+            clearTimeout(saveTimeout);
+            const footer = document.querySelector('.footer-note');
+            const originalText = footer.innerHTML;
+            footer.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            
+            saveTimeout = setTimeout(() => {
+                saveData();
+                footer.innerHTML = originalText;
+            }, 300);
+        }
+
+        function loadData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (!Array.isArray(parsed)) throw new Error('Invalid data format');
+                    cards = parsed;
+                    cards = cards.filter(c => c && typeof c === 'object')
+                        .map(c => {
+                            if (!Array.isArray(c.bills)) c.bills = [];
+                            c.bills = c.bills.filter(b => b && typeof b === 'object')
+                                .map(b => {
+                                    if (!Array.isArray(b.done)) b.done = [];
+                                    while (b.done.length < b.installments) b.done.push(false);
+                                    while (b.done.length > b.installments) b.done.pop();
+                                    return b;
+                                });
+                            return c;
+                        });
+                } catch(e) {
+                    const backup = localStorage.getItem(STORAGE_KEY + '_backup');
+                    if (backup) {
+                        try {
+                            cards = JSON.parse(backup);
+                            showToast('⚠️ Restored from backup after data corruption.', 'error');
+                        } catch(e2) {
+                            cards = [];
+                            showToast('❌ Data corrupted. Starting fresh.', 'error');
+                        }
+                    } else {
+                        cards = [];
+                        showToast('❌ Data corrupted. Starting fresh.', 'error');
+                    }
+                }
+            } else {
+                const today = new Date().toISOString().split('T')[0];
+                cards = [
+                    { 
+                        id: 'c1', 
+                        name: 'Main Credit Card', 
+                        description: 'Primary card for all purchases',
+                        image: null,
+                        bills: [
+                            { id: 'b1', name: 'MacBook Air', description: 'M3 chip, 16GB RAM', purchaseDate: today, installments: 3, price: 99.99, done: [true, false, false] },
+                            { id: 'b2', name: 'Samsung S24', description: 'Ultra, 256GB', purchaseDate: today, installments: 5, price: 49.99, done: [false, false, false, false, false] }
+                        ]
+                    },
+                    { 
+                        id: 'c2', 
+                        name: 'Store Card', 
+                        description: 'Electronics store credit',
+                        image: null,
+                        bills: [
+                            { id: 'b3', name: 'Sony Headphones', description: 'WH-1000XM5', purchaseDate: today, installments: 2, price: 29.99, done: [true, true] }
+                        ]
+                    },
+                    { 
+                        id: 'c3', 
+                        name: 'Gas Card', 
+                        description: 'Fuel purchases',
+                        image: null,
+                        bills: []
+                    }
+                ];
+                saveData();
+            }
+            
+            const savedCurrency = localStorage.getItem(CURRENCY_KEY);
+            if (savedCurrency) {
+                currentCurrency = savedCurrency;
+                document.getElementById('currencySelect').value = savedCurrency;
+            }
+            
+            render();
+        }
+
+        // ---------- IMAGE COMPRESSION ----------
+        function compressImage(file, maxWidth = 150, maxHeight = 150, quality = 0.6) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = (height * maxWidth) / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width = (width * maxHeight) / height;
+                                height = maxHeight;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/webp', quality));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ---------- BILL SUMMARY ----------
+        function computeInstallmentDates(purchaseDate, installments) {
+            const start = new Date(purchaseDate);
+            const day = start.getDate();
+            const dates = [];
+            for (let i = 0; i < installments; i++) {
+                const d = new Date(start.getFullYear(), start.getMonth() + (i + 1), day);
+                dates.push(d);
+            }
+            return dates;
+        }
+
+        function getBillSummary(bill) {
+            const totalPrice = (bill.price || 0) * bill.installments;
+            const paidCount = bill.done.filter(Boolean).length;
+            const paidAmount = paidCount * (bill.price || 0);
+            const remainingAmount = totalPrice - paidAmount;
+            return { totalPrice, paidCount, paidAmount, remainingAmount };
+        }
+
+        function isDuplicateCard(name, excludeId) {
+            return cards.some(c => 
+                c.name.toLowerCase() === name.toLowerCase() && 
+                (!excludeId || c.id !== excludeId)
+            );
+        }
+
+        function isDuplicateBill(cardId, name, excludeBillId) {
+            const card = cards.find(c => c.id === cardId);
+            if (!card) return false;
+            return card.bills.some(b => 
+                b.name.toLowerCase() === name.toLowerCase() && 
+                (!excludeBillId || b.id !== excludeBillId)
+            );
+        }
+
+        // ---------- CRUD ----------
+        function addCard(card) {
+            cards.push(card);
+            saveDataWithIndicator();
+            render();
+        }
+
+        function updateCard(id, updated) {
+            const index = cards.findIndex(c => c.id === id);
+            if (index !== -1) {
+                cards[index] = { ...cards[index], ...updated };
+                saveDataWithIndicator();
+                render();
+            }
+        }
+
+        function deleteCard(id) {
+            if (confirm(t('deleteCardConfirm'))) {
+                cards = cards.filter(c => c.id !== id);
+                if (selectedCardId === id) {
+                    selectedCardId = null;
+                    isDetailMode = false;
+                }
+                saveDataWithIndicator();
+                render();
+            }
+        }
+
+        function addBill(cardId, bill) {
+            const card = cards.find(c => c.id === cardId);
+            if (card) {
+                card.bills.push(bill);
+                saveDataWithIndicator();
+                render();
+            }
+        }
+
+        function updateBill(cardId, billId, updated) {
+            const card = cards.find(c => c.id === cardId);
+            if (card) {
+                const index = card.bills.findIndex(b => b.id === billId);
+                if (index !== -1) {
+                    card.bills[index] = { ...card.bills[index], ...updated };
+                    saveDataWithIndicator();
+                    render();
+                }
+            }
+        }
+
+        function deleteBill(cardId, billId) {
+            if (confirm(t('deleteBillConfirm'))) {
+                const card = cards.find(c => c.id === cardId);
+                if (card) {
+                    card.bills = card.bills.filter(b => b.id !== billId);
+                    saveDataWithIndicator();
+                    render();
+                }
+            }
+        }
+
+        function toggleBillInstallment(cardId, billId, index) {
+            const card = cards.find(c => c.id === cardId);
+            if (card) {
+                const bill = card.bills.find(b => b.id === billId);
+                if (bill && index >= 0 && index < bill.done.length) {
+                    bill.done[index] = !bill.done[index];
+                    saveDataWithIndicator();
+                    updateBillCardDOM(cardId, billId, index);
+                }
+            }
+        }
+
+        // ---------- EXPORT ----------
+        function exportData() {
+            if (cards.length === 0) {
+                showToast(t('exportError'));
+                return;
+            }
+            const data = {
+                version: '2.0',
+                exportedAt: new Date().toISOString(),
+                cards: cards
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cards_bills_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('✅ Data exported successfully!', 'success');
+        }
+
+        function exportCSV() {
+            if (cards.length === 0) {
+                showToast(t('exportError'));
+                return;
+            }
+            
+            let csv = 'Card,Bill,Description,Total Installments,Paid Installments,Total Price,Paid Amount,Remaining,Status\n';
+            
+            cards.forEach(card => {
+                card.bills.forEach(bill => {
+                    const summary = getBillSummary(bill);
+                    const status = summary.remainingAmount <= 0 ? 'Paid Off' : 'Active';
+                    csv += `"${card.name}","${bill.name}","${bill.description || ''}",${bill.installments},${summary.paidCount},${summary.totalPrice.toFixed(2)},${summary.paidAmount.toFixed(2)},${summary.remainingAmount.toFixed(2)},${status}\n`;
+                });
+            });
+            
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cards_bills_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('✅ CSV exported successfully!', 'success');
+        }
+
+        function exportPDF() {
+            if (cards.length === 0) {
+                showToast(t('exportError'));
+                return;
+            }
+            
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            const formatter = getFormatter();
+            
+            let html = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cards & Bills Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        h1 { color: #1a5f7a; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th { background: #1a5f7a; color: white; padding: 8px; text-align: left; }
+                        td { padding: 8px; border-bottom: 1px solid #ddd; }
+                        .paid { color: #1a7a5c; }
+                        .remaining { color: #b34a3a; }
+                        .card-section { margin-bottom: 30px; }
+                        .card-title { background: #eef4f9; padding: 10px; font-size: 1.2em; font-weight: bold; }
+                        .summary { margin: 10px 0; padding: 10px; background: #f8fbfd; }
+                    </style>
+                </head>
+                <body>
+                    <h1>📊 Cards & Bills Report</h1>
+                    <p>Generated: ${new Date().toLocaleString()}</p>
+            `;
+            
+            let grandTotal = 0;
+            let grandPaid = 0;
+            
+            cards.forEach(card => {
+                let cardTotal = 0;
+                let cardPaid = 0;
+                let cardRemaining = 0;
+                
+                html += `<div class="card-section">
+                    <div class="card-title">${escapeHtml(card.name)} ${card.description ? '- ' + escapeHtml(card.description) : ''}</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bill</th>
+                                <th>Installments</th>
+                                <th>Paid</th>
+                                <th>Total</th>
+                                <th>Paid</th>
+                                <th>Remaining</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                card.bills.forEach(bill => {
+                    const summary = getBillSummary(bill);
+                    cardTotal += summary.totalPrice;
+                    cardPaid += summary.paidAmount;
+                    cardRemaining += summary.remainingAmount;
+                    const status = summary.remainingAmount <= 0 ? '✅ Paid Off' : '🔄 Active';
+                    
+                    html += `
+                        <tr>
+                            <td>${escapeHtml(bill.name)}</td>
+                            <td>${bill.installments}x</td>
+                            <td>${summary.paidCount}/${bill.installments}</td>
+                            <td>${formatter.format(summary.totalPrice)}</td>
+                            <td class="paid">${formatter.format(summary.paidAmount)}</td>
+                            <td class="remaining">${formatter.format(summary.remainingAmount)}</td>
+                            <td>${status}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                        </tbody>
+                    </table>
+                    <div class="summary">
+                        <strong>Card Summary:</strong> 
+                        Total: ${formatter.format(cardTotal)} | 
+                        Paid: ${formatter.format(cardPaid)} | 
+                        Remaining: ${formatter.format(cardRemaining)}
+                    </div>
+                </div>
+                `;
+                
+                grandTotal += cardTotal;
+                grandPaid += cardPaid;
+            });
+            
+            html += `
+                    <div style="margin-top: 30px; padding: 15px; background: #1a5f7a; color: white; text-align: center; font-size: 1.2em;">
+                        <strong>GRAND TOTAL:</strong> ${formatter.format(grandTotal)} | 
+                        <strong>PAID:</strong> ${formatter.format(grandPaid)} | 
+                        <strong>REMAINING:</strong> ${formatter.format(grandTotal - grandPaid)}
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(html);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => printWindow.print(), 500);
+        }
+
+        function showExportOptions() {
+            const existingMenu = document.querySelector('.export-menu');
+            if (existingMenu) {
+                existingMenu.remove();
+                return;
+            }
+            
+            const options = [
+                { label: '📄 JSON (Backup)', action: exportData },
+                { label: '📊 CSV (Excel)', action: exportCSV },
+                { label: '📑 PDF (Print)', action: exportPDF }
+            ];
+            
+            const menu = document.createElement('div');
+            menu.className = 'export-menu';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt.label;
+                btn.onclick = () => {
+                    opt.action();
+                    menu.remove();
+                };
+                menu.appendChild(btn);
+            });
+            
+            const exportBtn = document.getElementById('exportBtn');
+            const rect = exportBtn.getBoundingClientRect();
+            menu.style.top = rect.bottom + 'px';
+            menu.style.left = rect.left + 'px';
+            document.body.appendChild(menu);
+            
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu(e) {
+                    if (!menu.contains(e.target) && e.target !== exportBtn) {
+                        menu.remove();
+                        document.removeEventListener('click', closeMenu);
+                    }
+                });
+            }, 0);
+        }
+
+        // ---------- IMPORT ----------
+        function importData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (!data.cards || !Array.isArray(data.cards)) {
+                        showToast(t('importError'));
+                        return;
+                    }
+                    
+                    const importedCards = data.cards.filter(c => c && typeof c === 'object' && c.name);
+                    if (importedCards.length === 0) {
+                        showToast(t('importError'));
+                        return;
+                    }
+                    
+                    const sanitized = importedCards.map(c => ({
+                        id: c.id || generateId(),
+                        name: c.name,
+                        description: c.description || '',
+                        image: c.image || null,
+                        bills: Array.isArray(c.bills) ? c.bills.map(b => ({
+                            id: b.id || generateId(),
+                            name: b.name || 'Unnamed bill',
+                            description: b.description || '',
+                            purchaseDate: b.purchaseDate || new Date().toISOString().split('T')[0],
+                            installments: parseInt(b.installments, 10) || 3,
+                            price: parseFloat(b.price) || 0,
+                            done: Array.isArray(b.done) ? b.done : new Array(parseInt(b.installments, 10) || 3).fill(false)
+                        })) : []
+                    }));
+                    
+                    sanitized.forEach(c => {
+                        c.bills.forEach(b => {
+                            while (b.done.length < b.installments) b.done.push(false);
+                            while (b.done.length > b.installments) b.done.pop();
+                        });
+                    });
+                    
+                    cards = sanitized;
+                    selectedCardId = null;
+                    isDetailMode = false;
+                    selectedBills.clear();
+                    saveData();
+                    showToast(t('importSuccess'), 'success');
+                    render();
+                } catch(err) {
+                    showToast(t('importError'));
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function clearAllData() {
+            if (confirm(t('clearAllConfirm'))) {
+                cards = [];
+                selectedCardId = null;
+                isDetailMode = false;
+                selectedBills.clear();
+                saveData();
+                render();
+            }
+        }
+
+        // ---------- BULK ACTIONS ----------
+        function toggleBillSelection(cardId, billId) {
+            const key = `${cardId}|${billId}`;
+            if (selectedBills.has(key)) {
+                selectedBills.delete(key);
+            } else {
+                selectedBills.add(key);
+            }
+            updateSelectedUI();
+        }
+
+        function updateSelectedUI() {
+            const count = document.getElementById('selectedCount');
+            if (count) count.textContent = `${selectedBills.size} ${t('selected')}`;
+            
+            document.querySelectorAll('.bill-select-checkbox').forEach(cb => {
+                const key = `${cb.dataset.card}|${cb.dataset.bill}`;
+                cb.checked = selectedBills.has(key);
+            });
+        }
+
+        // ============================================================
+        //  SELECT ALL BILLS (selects bills, doesn't mark paid)
+        // ============================================================
+        function selectAllBills() {
+            const card = cards.find(c => c.id === selectedCardId);
+            if (!card) return;
+            card.bills.forEach(bill => {
+                selectedBills.add(`${card.id}|${bill.id}`);
+            });
+            updateSelectedUI();
+            showToast(`✅ ${selectedBills.size} bill(s) selected`, 'success');
+        }
+
+        // ============================================================
+        //  MARK SELECTED BILLS AS PAID
+        // ============================================================
+        function markSelectedPaid() {
+            if (selectedBills.size === 0) {
+                showToast('No bills selected. Use "Select All" first.');
+                return;
+            }
+            
+            if (!confirm(`Mark ${selectedBills.size} bill(s) as paid?`)) return;
+            
+            let count = 0;
+            selectedBills.forEach(key => {
+                const [cardId, billId] = key.split('|');
+                const card = cards.find(c => c.id === cardId);
+                if (card) {
+                    const bill = card.bills.find(b => b.id === billId);
+                    if (bill) {
+                        bill.done = bill.done.map(() => true);
+                        count++;
+                    }
+                }
+            });
+            
+            saveData();
+            selectedBills.clear();
+            render();
+            showToast(`✅ ${count} bill(s) marked as paid!`, 'success');
+        }
+
+        // ============================================================
+        //  MARK SELECTED BILLS AS NON-PAID (uncheck all installments)
+        // ============================================================
+        function markSelectedNonPaid() {
+            if (selectedBills.size === 0) {
+                showToast('No bills selected. Use "Select All" first.');
+                return;
+            }
+            
+            if (!confirm(`Mark ${selectedBills.size} bill(s) as non-paid?`)) return;
+            
+            let count = 0;
+            selectedBills.forEach(key => {
+                const [cardId, billId] = key.split('|');
+                const card = cards.find(c => c.id === cardId);
+                if (card) {
+                    const bill = card.bills.find(b => b.id === billId);
+                    if (bill) {
+                        bill.done = bill.done.map(() => false);
+                        count++;
+                    }
+                }
+            });
+            
+            saveData();
+            selectedBills.clear();
+            render();
+            showToast(`🔄 ${count} bill(s) marked as non-paid!`, 'success');
+        }
+
+        function unselectAllBills() {
+            selectedBills.clear();
+            updateSelectedUI();
+        }
+
+        // ---------- DOM UPDATE ----------
+        function updateBillCardDOM(cardId, billId, toggledIndex) {
+            const card = cards.find(c => c.id === cardId);
+            if (!card) return;
+            const bill = card.bills.find(b => b.id === billId);
+            if (!bill) return;
+
+            const billCardDiv = document.querySelector(`.bill-card[data-bill-id="${billId}"]`);
+            if (!billCardDiv) { render(); return; }
+
+            const formatter = getFormatter();
+            const summary = getBillSummary(bill);
+            const dates = computeInstallmentDates(bill.purchaseDate, bill.installments);
+            const today = new Date();
+            const installmentsLeftCount = bill.installments - summary.paidCount;
+
+            const paidInfo = billCardDiv.querySelector('.bi-paid');
+            if (paidInfo) paidInfo.innerHTML = `<i class="fas fa-calendar-check"></i> ${summary.paidCount}/${bill.installments} ${t('paid')}`;
+
+            const paidAmountEl = billCardDiv.querySelector('.ps-paid-amount');
+            if (paidAmountEl) paidAmountEl.innerHTML = `<i class="fas fa-check-circle"></i> ${t('paidAmount')}: ${formatter.format(summary.paidAmount)}`;
+            const paidCountEl = billCardDiv.querySelector('.ps-paid-count');
+            if (paidCountEl) paidCountEl.textContent = `${summary.paidCount} ${t('installmentsPaidLabel')}`;
+
+            const remainingSpan = billCardDiv.querySelector('.ps-remaining');
+            if (remainingSpan) remainingSpan.style.color = summary.remainingAmount <= 0 ? '#1a7a5c' : '#b34a3a';
+            const remainingAmountEl = billCardDiv.querySelector('.ps-remaining-amount');
+            if (remainingAmountEl) remainingAmountEl.innerHTML = `<i class="fas fa-clock"></i> ${t('remaining')}: ${formatter.format(summary.remainingAmount)}`;
+            const remainingCountEl = billCardDiv.querySelector('.ps-remaining-count');
+            if (remainingCountEl) remainingCountEl.textContent = `${installmentsLeftCount} ${t('installmentsLeftLabel')}`;
+
+            const pct = bill.installments > 0 ? Math.round((summary.paidCount / bill.installments) * 100) : 0;
+            const wasFullyPaid = billCardDiv.classList.contains('fully-paid');
+
+            const donutEl = billCardDiv.querySelector('.bill-donut');
+            if (donutEl) {
+                donutEl.style.setProperty('--pct', pct + '%');
+                donutEl.classList.toggle('complete', pct >= 100);
+                donutEl.title = `${summary.paidCount} ${t('installmentsPaidLabel')} · ${installmentsLeftCount} ${t('installmentsLeftLabel')}`;
+                const donutText = donutEl.querySelector('.bill-donut-text');
+                if (donutText) donutText.innerHTML = `${summary.paidCount}/${bill.installments}<small>${pct}%</small>`;
+            }
+            const progressFill = billCardDiv.querySelector('.bill-progress-fill');
+            if (progressFill) {
+                progressFill.style.width = pct + '%';
+                progressFill.classList.toggle('complete', pct >= 100);
+            }
+            billCardDiv.classList.toggle('fully-paid', pct >= 100);
+            if (pct >= 100 && !wasFullyPaid) {
+                billCardDiv.classList.remove('just-completed');
+                void billCardDiv.offsetWidth;
+                billCardDiv.classList.add('just-completed');
+                showToast(`${bill.name} — all paid off! 🎉`, 'success');
+            }
+
+            const items = billCardDiv.querySelectorAll('.bill-installment');
+            items.forEach((item, i) => {
+                const isDone = bill.done[i] || false;
+                const dueDate = dates[i] || new Date();
+                const isPastDue = !isDone && dueDate < today;
+                const isDueSoon = !isDone && !isPastDue && dueDate < new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+                item.classList.toggle('done', isDone);
+                item.classList.toggle('past-due', isPastDue);
+
+                const dateSpan = item.querySelector('.installment-date');
+                if (dateSpan) {
+                    const dateStr = formatDate(dueDate);
+                    let statusBadge = '';
+                    if (!isDone && isPastDue) {
+                        statusBadge = `<span class="badge-pastdue-sm">${t('pastDue')}</span>`;
+                    } else if (!isDone && isDueSoon) {
+                        statusBadge = `<span class="badge-due-sm">${t('dueSoon')}</span>`;
+                    }
+                    dateSpan.innerHTML = `${dateStr} ${statusBadge}`;
+                }
+
+                if (i === toggledIndex) {
+                    item.classList.remove('toggled-pulse');
+                    void item.offsetWidth;
+                    item.classList.add('toggled-pulse');
+                }
+            });
+
+            updateCardDetailHeaderTotals(cardId);
+        }
+
+        function updateCardDetailHeaderTotals(cardId) {
+            if (!isDetailMode || selectedCardId !== cardId) return;
+            const card = cards.find(c => c.id === cardId);
+            if (!card) return;
+            let totalPrice = 0, totalPaid = 0, totalRemaining = 0;
+            card.bills.forEach(b => {
+                const s = getBillSummary(b);
+                totalPrice += s.totalPrice;
+                totalPaid += s.paidAmount;
+                totalRemaining += s.remainingAmount;
+            });
+            const formatter = getFormatter();
+            const summaryEl = document.getElementById('cardDetailSummary');
+            if (summaryEl) {
+                summaryEl.innerHTML = `
+                    ${card.bills.length} bills · Total: ${formatter.format(totalPrice)} · 
+                    <span style="color:#1a7a5c;">Paid: ${formatter.format(totalPaid)}</span> · 
+                    <span style="color:${totalRemaining <= 0 ? '#1a7a5c' : '#b34a3a'};">Remaining: ${formatter.format(totalRemaining)}</span>
+                `;
+            }
+        }
+
+        function createInstallmentDonut(paidCount, totalCount) {
+            const pct = totalCount > 0 ? Math.round((paidCount / totalCount) * 100) : 0;
+            const leftCount = totalCount - paidCount;
+            const wrap = document.createElement('div');
+            wrap.className = `bill-donut ${pct >= 100 ? 'complete' : ''}`;
+            wrap.style.setProperty('--pct', pct + '%');
+            wrap.title = `${paidCount} ${t('installmentsPaidLabel')} · ${leftCount} ${t('installmentsLeftLabel')}`;
+            const textWrap = document.createElement('div');
+            textWrap.className = 'bill-donut-text';
+            textWrap.innerHTML = `${paidCount}/${totalCount}<small>${pct}%</small>`;
+            wrap.appendChild(textWrap);
+            return wrap;
+        }
+
+        // ---------- RENDER ----------
+        function renderBill(bill, cardId) {
+            const { id, name, description, purchaseDate, installments, price, done } = bill;
+            const dates = computeInstallmentDates(purchaseDate, installments);
+            const today = new Date();
+            const formatter = getFormatter();
+            const summary = getBillSummary(bill);
+            const isSelected = selectedBills.has(`${cardId}|${id}`);
+
+            const div = document.createElement('div');
+            div.className = 'bill-card';
+            div.dataset.billId = id;
+            div.dataset.cardId = cardId;
+
+            const header = document.createElement('div');
+            header.className = 'bill-header';
+            
+            const leftDiv = document.createElement('div');
+            leftDiv.className = 'bill-header-left';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'bill-select-checkbox';
+            checkbox.dataset.card = cardId;
+            checkbox.dataset.bill = id;
+            checkbox.checked = isSelected;
+            checkbox.title = t('selectBills');
+            checkbox.addEventListener('change', function() {
+                toggleBillSelection(this.dataset.card, this.dataset.bill);
+            });
+            leftDiv.appendChild(checkbox);
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.innerHTML = `
+                <div class="bill-title">${escapeHtml(name)} <small>${installments}x</small></div>
+                ${description ? `<div class="bill-desc">${escapeHtml(description)}</div>` : ''}
+            `;
+            leftDiv.appendChild(titleDiv);
+            header.appendChild(leftDiv);
+
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'bill-actions';
+            actionsDiv.innerHTML = `
+                <button class="icon-btn-sm edit-bill-btn" data-card="${cardId}" data-bill="${id}" title="Edit"><i class="fas fa-edit"></i></button>
+                <button class="icon-btn-sm simulate-bill-btn" data-card="${cardId}" data-bill="${id}" title="${t('simulate')}"><i class="fas fa-calculator"></i></button>
+                <button class="icon-btn-sm danger delete-bill-btn" data-card="${cardId}" data-bill="${id}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+            `;
+            header.appendChild(actionsDiv);
+            div.appendChild(header);
+
+            const info = document.createElement('div');
+            info.className = 'bill-info';
+            const leftInstallments = installments - summary.paidCount;
+            const finalDate = leftInstallments > 0
+                ? new Date(today.getFullYear(), today.getMonth() + leftInstallments, 1)
+                : null;
+            const endsText = finalDate ? `${t('endsIn')} ${formatMonthYear(finalDate)}` : '';
+            info.innerHTML = `
+                <span class="bi-paid"><i class="fas fa-calendar-check"></i> ${summary.paidCount}/${installments} ${t('paid')}</span>
+                <span><i class="fas fa-dollar-sign"></i> ${formatter.format(summary.totalPrice)}</span>
+                ${summary.remainingAmount > 0 ? `<span class="bi-ends" style="color:#d9822b; font-weight:700;"><i class="fas fa-flag-checkered"></i> ${endsText}</span>` : ''}
+            `;
+            div.appendChild(info);
+
+            const paymentSummary = document.createElement('div');
+            paymentSummary.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.8rem;
+                padding: 0.2rem 0.4rem;
+                margin-bottom: 0.6rem;
+                background: #f0f5fa;
+                border-radius: 30px;
+                padding: 0.3rem 0.8rem;
+                font-weight: 500;
+            `;
+            const installmentsLeftCount = installments - summary.paidCount;
+            paymentSummary.innerHTML = `
+                <span class="ps-paid" style="color: #1a7a5c; display: flex; flex-direction: column;">
+                    <span class="ps-paid-amount"><i class="fas fa-check-circle"></i> ${t('paidAmount')}: ${formatter.format(summary.paidAmount)}</span>
+                    <small class="ps-paid-count" style="font-weight: 400; opacity: 0.85;">${summary.paidCount} ${t('installmentsPaidLabel')}</small>
+                </span>
+                <span class="ps-remaining" style="color: ${summary.remainingAmount <= 0 ? '#1a7a5c' : '#b34a3a'}; display: flex; flex-direction: column; text-align: right;">
+                    <span class="ps-remaining-amount"><i class="fas fa-clock"></i> ${t('remaining')}: ${formatter.format(summary.remainingAmount)}</span>
+                    <small class="ps-remaining-count" style="font-weight: 400; opacity: 0.85;">${installmentsLeftCount} ${t('installmentsLeftLabel')}</small>
+                </span>
+            `;
+            const graphicRow = document.createElement('div');
+            graphicRow.className = 'bill-graphic-row';
+            graphicRow.appendChild(createInstallmentDonut(summary.paidCount, installments));
+            paymentSummary.style.flex = '1';
+            graphicRow.appendChild(paymentSummary);
+            div.appendChild(graphicRow);
+
+            const pct = installments > 0 ? Math.round((summary.paidCount / installments) * 100) : 0;
+            div.classList.toggle('fully-paid', pct >= 100);
+            const progressTrack = document.createElement('div');
+            progressTrack.className = 'bill-progress-track';
+            const progressFill = document.createElement('div');
+            progressFill.className = `bill-progress-fill ${pct >= 100 ? 'complete' : ''}`;
+            progressFill.style.width = pct + '%';
+            progressTrack.appendChild(progressFill);
+            div.appendChild(progressTrack);
+
+            const timeline = document.createElement('div');
+            timeline.className = 'bill-timeline';
+
+            for (let i = 0; i < installments; i++) {
+                const isDone = done[i] || false;
+                const dueDate = dates[i] || new Date();
+                const isPastDue = !isDone && dueDate < today;
+                const isDueSoon = !isDone && !isPastDue && dueDate < new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+                const dateStr = formatDate(dueDate);
+
+                const item = document.createElement('div');
+                item.className = `bill-installment ${isDone ? 'done' : ''} ${isPastDue ? 'past-due' : ''}`;
+                item.style.animationDelay = `${Math.min(i * 0.035, 0.4)}s`;
+
+                const checkWrap = document.createElement('label');
+                checkWrap.className = 'custom-checkbox-wrap';
+
+                const check = document.createElement('input');
+                check.type = 'checkbox';
+                check.checked = isDone;
+                check.dataset.card = cardId;
+                check.dataset.bill = id;
+                check.dataset.index = i;
+                check.addEventListener('change', function(e) {
+                    e.stopPropagation();
+                    toggleBillInstallment(this.dataset.card, this.dataset.bill, parseInt(this.dataset.index, 10));
+                });
+
+                const customBox = document.createElement('span');
+                customBox.className = 'custom-checkbox';
+                customBox.innerHTML = '<i class="fas fa-check"></i>';
+
+                checkWrap.appendChild(check);
+                checkWrap.appendChild(customBox);
+
+                const label = document.createElement('span');
+                label.className = 'installment-label';
+                label.innerHTML = `<i class="fas fa-circle"></i> ${t('installment')} ${i+1}`;
+
+                let statusBadge = '';
+                if (!isDone && isPastDue) {
+                    statusBadge = `<span class="badge-pastdue-sm">${t('pastDue')}</span>`;
+                } else if (!isDone && isDueSoon) {
+                    statusBadge = `<span class="badge-due-sm">${t('dueSoon')}</span>`;
+                }
+
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'installment-date';
+                dateSpan.innerHTML = `${dateStr} ${statusBadge}`;
+
+                item.appendChild(checkWrap);
+                item.appendChild(label);
+                item.appendChild(dateSpan);
+
+                if (price) {
+                    const priceSpan = document.createElement('span');
+                    priceSpan.className = 'installment-price-sm';
+                    priceSpan.textContent = formatter.format(price);
+                    item.appendChild(priceSpan);
+                }
+
+                timeline.appendChild(item);
+            }
+
+            div.appendChild(timeline);
+            return div;
+        }
+
+        function renderDashboard() {
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = '';
+
+            if (cards.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('cardDetail').classList.remove('visible');
+                dashboard.classList.add('hidden');
+                document.getElementById('dashboardControls').style.display = 'none';
+                return;
+            }
+            document.getElementById('emptyState').style.display = 'none';
+            dashboard.classList.remove('hidden');
+            document.getElementById('dashboardControls').style.display = 'flex';
+
+            const searchTerm = document.getElementById('searchCardsInput').value.toLowerCase().trim();
+            const sortType = document.getElementById('sortCardsSelect').value;
+
+            let filteredCards = cards.filter(card => 
+                card.name.toLowerCase().includes(searchTerm) ||
+                (card.description && card.description.toLowerCase().includes(searchTerm))
+            );
+
+            if (sortType === 'alpha') {
+                filteredCards.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortType === 'alphaDesc') {
+                filteredCards.sort((a, b) => b.name.localeCompare(a.name));
+            }
+
+            document.getElementById('cardsStats').textContent = `${filteredCards.length} cards`;
+
+            if (filteredCards.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = `
+                    <i class="fas fa-search"></i>
+                    <p>${t('noResults')}</p>
+                `;
+                dashboard.appendChild(noResults);
+                return;
+            }
+
+            const formatter = getFormatter();
+            
+            filteredCards.forEach(card => {
+                const div = document.createElement('div');
+                div.className = `card-item ${selectedCardId === card.id && isDetailMode ? 'active' : ''}`;
+                div.dataset.cardId = card.id;
+
+                let totalBills = card.bills.length;
+                let totalPaid = 0;
+                let totalInstallments = 0;
+                let totalPaidAmount = 0;
+                let totalRemaining = 0;
+                let totalPrice = 0;
+                let cardEndDate = null;
+                card.bills.forEach(b => {
+                    const summary = getBillSummary(b);
+                    totalPaid += summary.paidCount;
+                    totalInstallments += b.installments;
+                    totalRemaining += summary.remainingAmount;
+                    totalPaidAmount += summary.paidAmount;
+                    totalPrice += summary.totalPrice;
+                    if (summary.paidCount < b.installments) {
+                        const now = new Date();
+                        const billEndDate = new Date(now.getFullYear(), now.getMonth() + (b.installments - summary.paidCount), 1);
+                        if (billEndDate && (!cardEndDate || billEndDate > cardEndDate)) {
+                            cardEndDate = billEndDate;
+                        }
+                    }
+                });
+
+                const monthlyPrice = totalPaid > 0 ? (totalPaidAmount / totalPaid) : 0;
+
+                div.innerHTML = `
+                    <div class="card-item-image">
+                        ${card.image ? `<img src="${escapeHtml(sanitizeImageSrc(card.image))}" alt="${escapeHtml(card.name)}">` : `<i class="fas fa-credit-card"></i>`}
+                    </div>
+                    <div class="card-item-name">${escapeHtml(card.name)} <small style="font-weight:600; font-size:0.85em; color:#8aabbe; margin-left:4px;">${totalInstallments}x</small></div>
+                    ${card.description ? `<div class="card-item-desc">${escapeHtml(card.description)}</div>` : ''}
+                    <div class="card-item-badge">
+                        <div class="badge-row"><i class="fas fa-receipt"></i> ${totalBills} bills</div>
+                        <div class="badge-row">
+                            <span style="color:#1a7a5c;">${totalPaid} ${t('installmentsPaidLabel')}</span>
+                            <span class="badge-price-sm">${formatter.format(totalPaidAmount)}</span>
+                            ${totalPaid > 0 ? `<span class="badge-price-sm monthly">(${formatter.format(monthlyPrice)}/${t('monthly')})</span>` : ''}
+                        </div>
+                        ${totalInstallments - totalPaid > 0 ? 
+                            `<div class="badge-row">
+                                <span style="color:#b34a3a;">${totalInstallments - totalPaid} ${t('installmentsLeftLabel')}</span>
+                                <span class="badge-price-sm">${formatter.format(totalRemaining)}</span>
+                            </div>
+                            ${cardEndDate ? `<div class="badge-row" style="color:#d9822b; font-weight:700; font-size:0.8em;"><i class="fas fa-flag-checkered"></i> ${t('endsIn')} ${formatMonthYear(cardEndDate)}</div>` : ''}` : 
+                            `<div class="badge-row" style="color:#1a7a5c;">✅ Paid off!</div>`
+                        }
+                        <div class="badge-row badge-total">Total: ${formatter.format(totalPrice)}</div>
+                    </div>
+                    <div class="card-item-actions">
+                        <button class="edit-card-btn" data-card="${card.id}" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="danger delete-card-btn" data-card="${card.id}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+
+                div.addEventListener('click', function(e) {
+                    if (e.target.closest('.card-item-actions')) return;
+                    const cardId = this.dataset.cardId;
+                    selectedCardId = cardId;
+                    isDetailMode = true;
+                    selectedBills.clear();
+                    render();
+                });
+
+                dashboard.appendChild(div);
+            });
+
+            document.querySelectorAll('.edit-card-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    openCardModal(cardId);
+                });
+            });
+
+            document.querySelectorAll('.delete-card-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    deleteCard(cardId);
+                });
+            });
+        }
+
+        function renderCardDetail() {
+            const detail = document.getElementById('cardDetail');
+            const container = document.getElementById('appContainer');
+            
+            if (!selectedCardId || !isDetailMode) {
+                detail.classList.remove('visible');
+                detail.classList.remove('enter');
+                container.classList.remove('detail-mode');
+                return;
+            }
+
+            const card = cards.find(c => c.id === selectedCardId);
+            if (!card) {
+                detail.classList.remove('visible');
+                detail.classList.remove('enter');
+                container.classList.remove('detail-mode');
+                selectedCardId = null;
+                isDetailMode = false;
+                return;
+            }
+
+            container.classList.add('detail-mode');
+            detail.classList.add('visible');
+            detail.classList.remove('enter');
+
+            let totalBills = card.bills.length;
+            let totalPrice = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+            card.bills.forEach(b => {
+                const summary = getBillSummary(b);
+                totalPrice += summary.totalPrice;
+                totalPaid += summary.paidAmount;
+                totalRemaining += summary.remainingAmount;
+            });
+            const formatter = getFormatter();
+
+            const backBtn = document.createElement('button');
+            backBtn.className = 'card-detail-back';
+            backBtn.innerHTML = `<i class="fas fa-arrow-left"></i> <span>${t('back')}</span>`;
+            backBtn.addEventListener('click', function() {
+                selectedCardId = null;
+                isDetailMode = false;
+                selectedBills.clear();
+                render();
+                setTimeout(() => {
+                    const searchInput = document.getElementById('searchCardsInput');
+                    if (searchInput) searchInput.focus();
+                }, 100);
+            });
+
+            const header = document.createElement('div');
+            header.className = 'card-detail-header';
+            header.innerHTML = `
+                <div class="card-detail-title">
+                    <div class="card-detail-image">
+                        ${card.image ? `<img src="${escapeHtml(sanitizeImageSrc(card.image))}" alt="${escapeHtml(card.name)}">` : `<i class="fas fa-credit-card"></i>`}
+                    </div>
+                    <div class="card-detail-info">
+                        <h2>${escapeHtml(card.name)}</h2>
+                        ${card.description ? `<div class="desc">${escapeHtml(card.description)}</div>` : ''}
+                        <div class="summary" id="cardDetailSummary">
+                            ${totalBills} bills · Total: ${formatter.format(totalPrice)} · 
+                            <span style="color:#1a7a5c;">Paid: ${formatter.format(totalPaid)}</span> · 
+                            <span style="color:${totalRemaining <= 0 ? '#1a7a5c' : '#b34a3a'};">Remaining: ${formatter.format(totalRemaining)}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-detail-actions">
+                    <button class="btn-sm btn-sm-success add-bill-btn" data-card="${card.id}"><i class="fas fa-plus"></i> <span>Add bill</span></button>
+                    <button class="btn-sm btn-sm-outline edit-card-btn" data-card="${card.id}"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn-sm btn-sm-danger delete-card-btn" data-card="${card.id}"><i class="fas fa-trash-alt"></i> Delete</button>
+                </div>
+            `;
+
+            const bulkActions = document.createElement('div');
+            bulkActions.className = 'bulk-actions';
+            bulkActions.innerHTML = `
+                <button class="btn-sm btn-sm-primary" id="selectAllBills"><i class="fas fa-check-double"></i> ${t('selectAll')}</button>
+                <button class="btn-sm btn-sm-success" id="markSelectedPaid"><i class="fas fa-check-circle"></i> ${t('markPaid')}</button>
+                <button class="btn-sm btn-sm-danger-outline" id="markSelectedNonPaid"><i class="fas fa-undo"></i> ${t('markNonPaid')}</button>
+                <button class="btn-sm btn-sm-outline" id="unselectAllBills"><i class="fas fa-times"></i> ${t('unselectAll')}</button>
+                <span class="selected-count" id="selectedCount">0 ${t('selected')}</span>
+            `;
+            
+            const billGrid = document.createElement('div');
+            billGrid.className = 'bill-grid';
+
+            if (card.bills && card.bills.length > 0) {
+                card.bills.forEach((bill, idx) => {
+                    const billEl = renderBill(bill, card.id);
+                    billEl.style.animationDelay = `${Math.min(idx * 0.06, 0.4)}s`;
+                    billGrid.appendChild(billEl);
+                });
+            } else {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'empty-bills';
+                emptyDiv.innerHTML = `
+                    <i class="fas fa-receipt"></i>
+                    <p>${t('noBills')}</p>
+                    <button class="btn-sm btn-sm-success add-bill-btn" data-card="${card.id}">
+                        <i class="fas fa-plus"></i> ${t('newBill')}
+                    </button>
+                `;
+                billGrid.appendChild(emptyDiv);
+            }
+
+            detail.innerHTML = '';
+            detail.appendChild(backBtn);
+            detail.appendChild(header);
+            detail.appendChild(bulkActions);
+            detail.appendChild(billGrid);
+
+            // Bulk action listeners
+            document.getElementById('selectAllBills')?.addEventListener('click', selectAllBills);
+            document.getElementById('unselectAllBills')?.addEventListener('click', unselectAllBills);
+            document.getElementById('markSelectedPaid')?.addEventListener('click', markSelectedPaid);
+            document.getElementById('markSelectedNonPaid')?.addEventListener('click', markSelectedNonPaid);
+
+            document.querySelectorAll('.add-bill-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    openBillModal(cardId);
+                });
+            });
+
+            document.querySelectorAll('.edit-card-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    openCardModal(cardId);
+                });
+            });
+
+            document.querySelectorAll('.delete-card-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    deleteCard(cardId);
+                });
+            });
+
+            document.querySelectorAll('.edit-bill-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    const billId = this.dataset.bill;
+                    openBillModal(cardId, billId);
+                });
+            });
+
+            document.querySelectorAll('.delete-bill-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    const billId = this.dataset.bill;
+                    deleteBill(cardId, billId);
+                });
+            });
+
+            document.querySelectorAll('.simulate-bill-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const cardId = this.dataset.card;
+                    const billId = this.dataset.bill;
+                    openSimulateModal(cardId, billId);
+                });
+            });
+
+            updateUI();
+            updateSelectedUI();
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => detail.classList.add('enter'));
+            });
+        }
+
+        function render() {
+            renderDashboard();
+            renderCardDetail();
+            updateUI();
+        }
+
+        // ---------- MODAL SETUP ----------
+        function setupModalFocusTrap(modal) {
+            const focusable = modal.querySelectorAll('input, button, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstFocusable = focusable[0];
+            const lastFocusable = focusable[focusable.length - 1];
+            
+            modal.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            e.preventDefault();
+                            lastFocusable.focus();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            e.preventDefault();
+                            firstFocusable.focus();
+                        }
+                    }
+                }
+            });
+
+            return { firstFocusable, lastFocusable };
+        }
+
+        // ---------- CARD MODAL ----------
+        const cardModal = document.getElementById('cardModal');
+        const cardForm = document.getElementById('cardForm');
+        const cardNameInput = document.getElementById('cardNameInput');
+        const cardDescInput = document.getElementById('cardDescInput');
+        const cardImageInput = document.getElementById('cardImageInput');
+        const cardImagePreview = document.getElementById('cardImagePreview');
+        const cardSubmitBtn = document.getElementById('cardSubmitBtn');
+        const closeCardModalBtn = document.getElementById('closeCardModalBtn');
+        const cardModalTitle = document.getElementById('cardModalTitle');
+
+        let cardModalFocus = null;
+
+        cardImageInput.addEventListener('change', async function(e) {
+            const file = this.files[0];
+            if (file) {
+                try {
+                    cardImagePreview.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    const compressed = await compressImage(file, 150, 150, 0.6);
+                    cardImagePreview.innerHTML = `<img src="${compressed}" alt="Preview">`;
+                    cardImageDataUrl = compressed;
+                    showToast('Image optimized successfully!', 'success');
+                } catch (error) {
+                    showToast('Error processing image');
+                    cardImagePreview.innerHTML = '<i class="fas fa-image"></i>';
+                }
+            } else {
+                cardImagePreview.innerHTML = '<i class="fas fa-image"></i>';
+                cardImageDataUrl = null;
+            }
+        });
+
+        function openCardModal(cardId = null) {
+            cardModal.classList.add('active');
+            cardImageDataUrl = null;
+            cardImagePreview.innerHTML = '<i class="fas fa-image"></i>';
+            cardImageInput.value = '';
+            
+            if (!cardModalFocus) {
+                cardModalFocus = setupModalFocusTrap(cardModal);
+            }
+
+            if (cardId) {
+                const card = cards.find(c => c.id === cardId);
+                if (!card) return;
+                cardModalTitle.innerHTML = `<i class="fas fa-edit"></i> ${t('editCard')}`;
+                cardNameInput.value = card.name || '';
+                cardDescInput.value = card.description || '';
+                if (card.image) {
+                    cardImagePreview.innerHTML = `<img src="${escapeHtml(sanitizeImageSrc(card.image))}" alt="Preview">`;
+                    cardImageDataUrl = card.image;
+                }
+                cardSubmitBtn.innerHTML = `<i class="fas fa-check"></i> ${t('update')}`;
+                editingCardId = cardId;
+            } else {
+                cardModalTitle.innerHTML = `<i class="fas fa-plus-circle"></i> ${t('newCard')}`;
+                cardNameInput.value = '';
+                cardDescInput.value = '';
+                cardSubmitBtn.innerHTML = `<i class="fas fa-check"></i> ${t('create')}`;
+                editingCardId = null;
+            }
+            setTimeout(() => cardNameInput.focus(), 150);
+        }
+
+        function closeCardModal() {
+            cardModal.classList.remove('active');
+            editingCardId = null;
+            cardImageDataUrl = null;
+            cardImagePreview.innerHTML = '<i class="fas fa-image"></i>';
+            const searchInput = document.getElementById('searchCardsInput');
+            if (searchInput && !isDetailMode) {
+                setTimeout(() => searchInput.focus(), 100);
+            }
+        }
+
+        closeCardModalBtn.addEventListener('click', closeCardModal);
+
+        // ============================================================
+        //  MODALS ONLY CLOSE WITH ESC KEY (NOT BY CLICKING OUTSIDE)
+        // ============================================================
+        // NO click listener on modals - they only close via ESC or Cancel button
+
+        // ---------- ESC KEY FOR ALL MODALS ----------
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // Close Card Modal
+                if (cardModal.classList.contains('active')) {
+                    closeCardModal();
+                    e.preventDefault();
+                    return;
+                }
+                // Close Bill Modal
+                if (billModal.classList.contains('active')) {
+                    closeBillModal();
+                    e.preventDefault();
+                    return;
+                }
+                // Close Sync Modal
+                if (syncModal.classList.contains('active')) {
+                    closeSyncModal();
+                    e.preventDefault();
+                    return;
+                }
+                // Close Simulate Modal
+                if (simulateModal.classList.contains('active')) {
+                    closeSimulateModal();
+                    e.preventDefault();
+                    return;
+                }
+                // Go back from detail view (only if no modals are open)
+                if (isDetailMode && selectedCardId) {
+                    e.preventDefault();
+                    selectedCardId = null;
+                    isDetailMode = false;
+                    selectedBills.clear();
+                    render();
+                    setTimeout(() => {
+                        const searchInput = document.getElementById('searchCardsInput');
+                        if (searchInput) searchInput.focus();
+                    }, 100);
+                }
+            }
+        });
+
+        cardForm.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                cardForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        cardForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = cardNameInput.value.trim();
+            if (!name) { showToast('Please enter a card name.'); return; }
+            
+            if (!editingCardId && isDuplicateCard(name)) {
+                showToast('⚠️ A card with this name already exists!');
+                return;
+            }
+            
+            const description = cardDescInput.value.trim();
+
+            let finalImage = cardImageDataUrl;
+            if (!finalImage && editingCardId) {
+                const existing = cards.find(c => c.id === editingCardId);
+                if (existing) finalImage = existing.image;
+            }
+
+            if (editingCardId) {
+                updateCard(editingCardId, { name, description, image: finalImage });
+            } else {
+                const newCard = {
+                    id: generateId(),
+                    name,
+                    description,
+                    image: finalImage,
+                    bills: []
+                };
+                addCard(newCard);
+            }
+            closeCardModal();
+            cardForm.reset();
+            render();
+        });
+
+        // ---------- BILL MODAL ----------
+        const billModal = document.getElementById('billModal');
+        const billForm = document.getElementById('billForm');
+        const billNameInput = document.getElementById('billNameInput');
+        const billDescInput = document.getElementById('billDescInput');
+        const billPurchaseDate = document.getElementById('billPurchaseDate');
+        const billInstallments = document.getElementById('billInstallments');
+        const billPrice = document.getElementById('billPrice');
+        const billSubmitBtn = document.getElementById('billSubmitBtn');
+        const closeBillModalBtn = document.getElementById('closeBillModalBtn');
+        const billModalTitle = document.getElementById('billModalTitle');
+
+        let billModalFocus = null;
+
+        billPrice.addEventListener('input', function() {
+            if (parseFloat(this.value) < 0) {
+                this.value = '0.00';
+            }
+        });
+
+        billPurchaseDate.addEventListener('change', function() {
+            this.value = validateDate(this.value);
+        });
+
+        function openBillModal(cardId, billId = null) {
+            billModal.classList.add('active');
+            billForm.reset();
+            
+            if (!billModalFocus) {
+                billModalFocus = setupModalFocusTrap(billModal);
+            }
+
+            if (billId) {
+                const card = cards.find(c => c.id === cardId);
+                if (!card) return;
+                const bill = card.bills.find(b => b.id === billId);
+                if (!bill) return;
+                billModalTitle.innerHTML = `<i class="fas fa-edit"></i> ${t('editBill')}`;
+                billNameInput.value = bill.name || '';
+                billDescInput.value = bill.description || '';
+                billPurchaseDate.value = bill.purchaseDate || '';
+                billInstallments.value = bill.installments || 3;
+                billPrice.value = bill.price ? bill.price.toFixed(2) : '0.00';
+                billSubmitBtn.innerHTML = `<i class="fas fa-check"></i> ${t('update')}`;
+                editingBillId = billId;
+                editingBillCardId = cardId;
+            } else {
+                billModalTitle.innerHTML = `<i class="fas fa-receipt"></i> ${t('newBill')}`;
+                const today = new Date().toISOString().split('T')[0];
+                billPurchaseDate.value = today;
+                billInstallments.value = '3';
+                billPrice.value = '0.00';
+                billSubmitBtn.innerHTML = `<i class="fas fa-check"></i> ${t('create')}`;
+                editingBillId = null;
+                editingBillCardId = cardId;
+            }
+            setTimeout(() => billNameInput.focus(), 150);
+        }
+
+        function closeBillModal() {
+            billModal.classList.remove('active');
+            editingBillId = null;
+            editingBillCardId = null;
+        }
+
+        closeBillModalBtn.addEventListener('click', closeBillModal);
+
+        billForm.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                billForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        billForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = billNameInput.value.trim();
+            if (!name) { showToast('Please enter a bill name.'); return; }
+            
+            const description = billDescInput.value.trim();
+            const purchaseDate = billPurchaseDate.value;
+            if (!purchaseDate) { showToast('Please select a purchase date.'); return; }
+            const installments = parseInt(billInstallments.value, 10);
+            if (installments < 1) { showToast('Installments must be at least 1.'); return; }
+            const price = parseFloat(billPrice.value) || 0;
+
+            if (editingBillId && editingBillCardId) {
+                if (isDuplicateBill(editingBillCardId, name, editingBillId)) {
+                    showToast('⚠️ A bill with this name already exists on this card!');
+                    return;
+                }
+                updateBill(editingBillCardId, editingBillId, {
+                    name, description, purchaseDate, installments, price
+                });
+            } else if (editingBillCardId) {
+                if (isDuplicateBill(editingBillCardId, name)) {
+                    showToast('⚠️ A bill with this name already exists on this card!');
+                    return;
+                }
+                const newBill = {
+                    id: generateId(),
+                    name,
+                    description,
+                    purchaseDate,
+                    installments,
+                    price,
+                    done: new Array(installments).fill(false)
+                };
+                addBill(editingBillCardId, newBill);
+            }
+            closeBillModal();
+            billForm.reset();
+            render();
+        });
+
+        // ---------- SIMULATE MODAL ----------
+        const simulateModal = document.getElementById('simulateModal');
+        const simPaceInput = document.getElementById('simPaceInput');
+        const simOverridesList = document.getElementById('simOverridesList');
+        const simOverrideMonth = document.getElementById('simOverrideMonth');
+        const simOverrideCount = document.getElementById('simOverrideCount');
+        const simulateResults = document.getElementById('simulateResults');
+        const simulateFormWrap = document.getElementById('simulateFormWrap');
+        const simulateAlreadyPaid = document.getElementById('simulateAlreadyPaid');
+        const simulateBillInfo = document.getElementById('simulateBillInfo');
+
+        let simulatingCardId = null;
+        let simulatingBillId = null;
+        let simOverrides = []; // { month: 'YYYY-MM', count: N }
+
+        function currentMonthKey() {
+            const n = new Date();
+            return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function nextMonthKey(key) {
+            const [y, m] = key.split('-').map(Number);
+            const d = new Date(y, m, 1); // m is already "next" since JS months are 0-indexed
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function getSimulatingBill() {
+            const card = cards.find(c => c.id === simulatingCardId);
+            if (!card) return null;
+            return card.bills.find(b => b.id === simulatingBillId) || null;
+        }
+
+        function openSimulateModal(cardId, billId) {
+            const card = cards.find(c => c.id === cardId);
+            const bill = card ? card.bills.find(b => b.id === billId) : null;
+            if (!bill) return;
+            simulatingCardId = cardId;
+            simulatingBillId = billId;
+            simOverrides = [];
+            simPaceInput.value = '1';
+            simOverrideMonth.value = currentMonthKey();
+            simOverrideCount.value = '';
+            simulateResults.style.display = 'none';
+            simulateResults.innerHTML = '';
+            renderSimOverrides();
+
+            const summary = getBillSummary(bill);
+            const paidCount = bill.done.filter(Boolean).length;
+            const remaining = bill.installments - paidCount;
+            const formatter = getFormatter();
+            const dates = computeInstallmentDates(bill.purchaseDate, bill.installments);
+            const originalFinish = dates[dates.length - 1];
+
+            simulateBillInfo.innerHTML = `
+                <strong>${escapeHtml(bill.name)}</strong><br>
+                ${remaining} ${t('installmentsLeftLabel')} · ${formatter.format(summary.remainingAmount)} ${t('remaining').toLowerCase()}<br>
+                ${t('simOriginalPlan')}: ${originalFinish ? formatMonthYear(originalFinish) : '—'}
+            `;
+
+            if (remaining <= 0) {
+                simulateAlreadyPaid.style.display = 'block';
+                simulateAlreadyPaid.textContent = t('simAlreadyPaid');
+                simulateFormWrap.style.display = 'none';
+            } else {
+                simulateAlreadyPaid.style.display = 'none';
+                simulateFormWrap.style.display = 'block';
+            }
+
+            simulateModal.classList.add('active');
+        }
+
+        function closeSimulateModal() {
+            simulateModal.classList.remove('active');
+            simulatingCardId = null;
+            simulatingBillId = null;
+        }
+
+        function renderSimOverrides() {
+            if (simOverrides.length === 0) {
+                simOverridesList.innerHTML = `<div style="font-size:0.8rem;color:#8aabbe;">${t('simNoOverrides')}</div>`;
+                return;
+            }
+            simOverridesList.innerHTML = simOverrides.map((o, idx) => {
+                const [y, m] = o.month.split('-');
+                const label = formatMonthYear(new Date(parseInt(y, 10), parseInt(m, 10) - 1, 1));
+                return `
+                    <div style="display:flex;justify-content:space-between;align-items:center;background:#f0f5fa;border-radius:30px;padding:0.35rem 0.9rem;font-size:0.85rem;">
+                        <span>${label} → <strong>${o.count}</strong> ${t('installment').toLowerCase()}</span>
+                        <button type="button" class="sim-remove-override" data-idx="${idx}" title="${t('simRemoveOverride')}" style="background:none;border:none;color:#b34a3a;cursor:pointer;font-size:0.9rem;"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+            }).join('');
+            simOverridesList.querySelectorAll('.sim-remove-override').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.idx, 10);
+                    simOverrides.splice(idx, 1);
+                    renderSimOverrides();
+                });
+            });
+        }
+
+        function addSimOverride() {
+            const month = simOverrideMonth.value;
+            const count = parseInt(simOverrideCount.value, 10);
+            if (!month || isNaN(count) || count < 0) {
+                showToast(t('simInvalidOverride'));
+                return;
+            }
+            const existing = simOverrides.findIndex(o => o.month === month);
+            if (existing !== -1) {
+                simOverrides[existing].count = count;
+            } else {
+                simOverrides.push({ month, count });
+            }
+            simOverrides.sort((a, b) => a.month.localeCompare(b.month));
+            // Jump the month field to the next month so the user can keep
+            // typing sequential months (Sep: 2 → Oct: 3 → Nov: 1 ...) without
+            // re-picking the date each time.
+            simOverrideMonth.value = nextMonthKey(month);
+            simOverrideCount.value = '';
+            renderSimOverrides();
+            simOverrideCount.focus();
+        }
+
+        document.getElementById('simAddOverrideBtn').addEventListener('click', addSimOverride);
+
+        simOverrideCount.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSimOverride();
+            }
+        });
+
+        // Distributes the bill's remaining unpaid installments month by month,
+        // starting from the current month, using `pace` installments/month
+        // unless a specific 'YYYY-MM' override says otherwise.
+        function simulatePayoff(bill, pace, overrides) {
+            const overrideMap = new Map(overrides.map(o => [o.month, o.count]));
+            const paidCount = bill.done.filter(Boolean).length;
+            let remaining = bill.installments - paidCount;
+            const rows = [];
+            let cumulative = paidCount;
+            const now = new Date();
+            let cursor = new Date(now.getFullYear(), now.getMonth(), 1);
+            let guard = 0;
+            while (remaining > 0 && guard < 1200) {
+                guard++;
+                const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`;
+                const hasOverride = overrideMap.has(key);
+                let count = hasOverride ? overrideMap.get(key) : pace;
+                count = Math.max(0, Math.min(count, remaining));
+                if (count > 0) {
+                    cumulative += count;
+                    remaining -= count;
+                    rows.push({ key, label: formatMonthYear(cursor), count, cumulative, remaining });
+                }
+                if (!hasOverride && pace <= 0) break;
+                cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+            }
+            return { rows, remainingAfter: remaining, finished: remaining <= 0 };
+        }
+
+        document.getElementById('simRunBtn').addEventListener('click', function() {
+            const bill = getSimulatingBill();
+            if (!bill) return;
+            const pace = parseInt(simPaceInput.value, 10) || 0;
+            const result = simulatePayoff(bill, pace, simOverrides);
+
+            if (!result.finished) {
+                simulateResults.style.display = 'block';
+                simulateResults.innerHTML = `<div style="color:#b34a3a;font-weight:600;padding:0.6rem 0;">${t('simCantFinish')}</div>`;
+                return;
+            }
+
+            const lastRow = result.rows[result.rows.length - 1];
+            const rowsHtml = result.rows.map(r => `
+                <tr>
+                    <td style="padding:0.4rem 0.6rem;">${r.label}</td>
+                    <td style="padding:0.4rem 0.6rem;text-align:center;">${r.count}</td>
+                    <td style="padding:0.4rem 0.6rem;text-align:center;">${r.remaining}</td>
+                </tr>
+            `).join('');
+
+            simulateResults.style.display = 'block';
+            simulateResults.innerHTML = `
+                <div style="font-weight:700;color:#1a7a5c;margin-bottom:0.6rem;">
+                    <i class="fas fa-flag-checkered"></i> ${t('simProjectedFinish')}: ${lastRow ? lastRow.label : '—'}
+                </div>
+                <div style="max-height:220px;overflow-y:auto;border-radius:16px;border:1px solid #e0eaf2;">
+                    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                        <thead>
+                            <tr style="background:#eef4f9;">
+                                <th style="padding:0.4rem 0.6rem;text-align:left;">${t('simColMonth')}</th>
+                                <th style="padding:0.4rem 0.6rem;">${t('simColPaid')}</th>
+                                <th style="padding:0.4rem 0.6rem;">${t('simColLeft')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            `;
+        });
+
+        document.getElementById('closeSimulateModalBtn').addEventListener('click', closeSimulateModal);
+
+        // ---------- SYNC MODAL ----------
+        const syncModal = document.getElementById('syncModal');
+        const closeSyncModalBtn = document.getElementById('closeSyncModalBtn');
+
+        function openSyncModal() {
+            syncModal.classList.add('active');
+        }
+
+        function closeSyncModal() {
+            syncModal.classList.remove('active');
+        }
+
+        closeSyncModalBtn.addEventListener('click', closeSyncModal);
+
+        // ---------- EVENT LISTENERS ----------
+        document.getElementById('searchCardsInput').addEventListener('input', debounce(function(e) {
+            if (!isDetailMode) render();
+        }, 300));
+
+        document.getElementById('searchCardsInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (!isDetailMode) render();
+            }
+        });
+
+        document.getElementById('sortCardsSelect').addEventListener('change', function(e) {
+            if (!isDetailMode) render();
+        });
+
+        document.getElementById('openCreateCardBtn').addEventListener('click', function() {
+            openCardModal(null);
+        });
+
+        document.getElementById('emptyCreateBtn').addEventListener('click', function() {
+            openCardModal(null);
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', showExportOptions);
+        document.getElementById('importBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('fileInput').click();
+        });
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                importData(this.files[0]);
+                this.value = '';
+            }
+        });
+        document.getElementById('clearAllBtn').addEventListener('click', clearAllData);
+
+        document.getElementById('cloudSyncBtn').addEventListener('click', openSyncModal);
+
+        document.getElementById('currencySelect').addEventListener('change', function() {
+            currentCurrency = this.value;
+            localStorage.setItem(CURRENCY_KEY, currentCurrency);
+            render();
+        });
+
+        // ---------- KEYBOARD SHORTCUTS ----------
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                return;
+            }
+            
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'n':
+                        e.preventDefault();
+                        openCardModal(null);
+                        break;
+                    case 'b':
+                        e.preventDefault();
+                        if (isDetailMode && selectedCardId) {
+                            openBillModal(selectedCardId);
+                        } else {
+                            showToast('Please select a card first');
+                        }
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        showExportOptions();
+                        break;
+                    case 'i':
+                        e.preventDefault();
+                        document.getElementById('fileInput').click();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        document.getElementById('searchCardsInput').focus();
+                        break;
+                }
+            }
+            
+            // Single key shortcuts (ESC already handled above)
+            switch(e.key) {
+                case 'd':
+                    if (isDetailMode && selectedCardId && !e.ctrlKey && !e.metaKey) {
+                        if (confirm('Delete this card?')) {
+                            deleteCard(selectedCardId);
+                        }
+                    }
+                    break;
+            }
+        });
+
+        // ---------- LANGUAGE ----------
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                currentLang = this.dataset.lang;
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                updateUI();
+                render();
+            });
+        });
+
+        // ---------- UI UPDATE ----------
+        function updateUI() {
+            const elements = {
+                'appTitle': 'appTitle',
+                'newCardLabel': 'newCard',
+                'exportLabel': 'export',
+                'importLabel': 'import',
+                'clearLabel': 'clearAll',
+                'emptyMsg': 'emptyMsg',
+                'footerText': 'footer',
+                'cardNameLabel': 'cardNameLabel',
+                'cardDescLabel': 'cardDescLabel',
+                'cardImageLabel': 'cardImageLabel',
+                'billNameLabel': 'billNameLabel',
+                'billDescLabel': 'billDescLabel',
+                'billDateLabel': 'billDateLabel',
+                'billInstallmentsLabel': 'billInstallmentsLabel',
+                'billPriceLabel': 'billPriceLabel',
+                'cancelLabel': 'cancel',
+                'saveLabel': 'save',
+                'cancelLabelBill': 'cancel',
+                'saveLabelBill': 'save',
+                'simulateModalTitleText': 'simulateModalTitle',
+                'simPaceLabel': 'simPaceLabel',
+                'simOverridesTitle': 'simOverridesTitle',
+                'simOverridesHint': 'simOverridesHint',
+                'simAddOverrideLabel': 'simAddOverride',
+                'simRunLabel': 'simRunSimulation',
+                'simCancelLabel': 'cancel'
+            };
+            
+            for (const [id, key] of Object.entries(elements)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = t(key);
+                }
+            }
+
+            const searchInput = document.getElementById('searchCardsInput');
+            if (searchInput) searchInput.placeholder = t('searchCards');
+
+            const sortSelect = document.getElementById('sortCardsSelect');
+            if (sortSelect) {
+                sortSelect.options[0].text = t('sortAlpha');
+                sortSelect.options[1].text = t('sortAlphaDesc');
+            }
+        }
+
+        // ---------- INIT ----------
+        loadData();
+        updateUI();
+
+        window.addEventListener('beforeunload', function() {
+            saveData();
+        });
+
+        window.__cards = cards;
+    })();
+</script>
+</body>
+</html>
